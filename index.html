@@ -564,7 +564,8 @@ var subjects = [
   {clave:"305",grupo:"3001",nombre:"Álgebra Lineal II",profesores:"Amanda Montejano Cantoral / Juan Carlos Díaz Patiño",edificio:"ENES Edificio VI",color:"var(--subj-4)",darkText:true,horario:[{dia:"Lun",inicio:12,fin:14,aula:"VI-401"},{dia:"Mar",inicio:12,fin:14,aula:"VI-401"},{dia:"Jue",inicio:12,fin:14,aula:"VI-401"}]}
 ];
 
-var resources = [
+function defaultResources() {
+  return [
   {id:1,subjectClave:"306",type:"pdf",title:"Cálculo de varias variables",author:"James Stewart",link:"stewart-calculo-var.pdf",fileData:null,unit:"Unidad 1",uploadedBy:"Prof. Isaac Arelio",uploadedAt:"2024-01-15"},
   {id:2,subjectClave:"306",type:"pdf",title:"Análisis Vectorial",author:"Murray R. Spiegel",link:"spiegel-analisis-vec.pdf",fileData:null,unit:"Unidad 2",uploadedBy:"Prof. Isaac Arelio",uploadedAt:"2024-01-20"},
   {id:3,subjectClave:"307",type:"pdf",title:"Introduction to Algorithms",author:"Cormen, Leiserson, Rivest, Stein",link:"clrs-4ed.pdf",fileData:null,unit:"General",uploadedBy:"Prof. Jorge Ramírez",uploadedAt:"2024-02-01"},
@@ -572,8 +573,8 @@ var resources = [
   {id:5,subjectClave:"308",type:"pdf",title:"Probabilidad y Estadística para Ingeniería",author:"Walpole, Myers, Myers",link:"walpole-probabilidad.pdf",fileData:null,unit:"Unidad 1",uploadedBy:"Prof. Mario Santana",uploadedAt:"2024-01-25"},
   {id:6,subjectClave:"305",type:"pdf",title:"Álgebra Lineal",author:"Stanley I. Grossman",link:"grossman-algebra.pdf",fileData:null,unit:"Unidad 1",uploadedBy:"Profa. Amanda Montejano",uploadedAt:"2024-01-18"},
   {id:7,subjectClave:"305",type:"link",title:"3Blue1Brown - Linear Algebra",author:"Grant Sanderson",link:"https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab",fileData:null,unit:"General",uploadedBy:"Profa. Amanda Montejano",uploadedAt:"2024-02-10"}
-];
-var nextResId = 8;
+  ];
+}
 
 function makeDate(d) { var dt = new Date(); dt.setDate(dt.getDate() + d); return dt; }
 function fmtDate(d) { return d.toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}); }
@@ -615,7 +616,8 @@ function getResIcon(type) {
   }
 }
 
-var tasks = [
+function defaultTasks() {
+  return [
   {id:1,subjectClave:"306",title:"Serie de ejercicios 4: Integrales triples",desc:"Resolver ejercicios del capítulo 15, secciones 15.6-15.8 del Stewart.",due:makeDate(2),completed:false},
   {id:2,subjectClave:"307",title:"Implementación de Árbol AVL",desc:"Programar inserción, eliminación y balanceo en un árbol AVL en C++.",due:makeDate(1),completed:false},
   {id:3,subjectClave:"308",title:"Tarea 5: Distribuciones continuas",desc:"Resolver problemas de distribución normal, exponencial y gamma.",due:makeDate(1),completed:false},
@@ -627,11 +629,17 @@ var tasks = [
   {id:9,subjectClave:"306",title:"Serie de ejercicios 3: Integrales dobles",desc:"Coordenadas polares y aplicaciones de integración doble.",due:makeDate(-3),completed:true},
   {id:10,subjectClave:"307",title:"Práctica 2: Listas enlazadas",desc:"Listas simplemente y doblemente enlazadas con operaciones CRUD.",due:makeDate(-5),completed:true},
   {id:11,subjectClave:"308",title:"Tarea 4: Probabilidad condicional",desc:"Teorema de Bayes y aplicaciones.",due:makeDate(-7),completed:true}
-];
-var nextTaskId = 12, isAdmin = false, editingTaskId = null;
+  ];
+}
+var TASKS_STORAGE_KEY = "marcyhub_tasks_v1";
+var RESOURCES_STORAGE_KEY = "marcyhub_resources_v1";
+var ADMINS_STORAGE_KEY = "marcyhub_admins_v1";
+var tasks = loadTasks();
+var resources = loadResources();
+var nextTaskId = getNextId(tasks), isAdmin = false, editingTaskId = null;
+var nextResId = getNextId(resources);
 var currentView = "dashboard", prevView = "dashboard", isSwitching = false, searchPrevView = null;
 var taskFileData = null, resFileData = null;
-var ADMINS_STORAGE_KEY = "marcyhub_admins_v1";
 var admins = loadAdmins();
 
 var dayIdx = {Lun:1,Mar:2,Mie:3,Jue:4,Vie:5};
@@ -768,6 +776,7 @@ function toggleTask(id) {
   var t = tasks.find(function(t){ return t.id === id; });
   if (!t) return;
   t.completed = !t.completed;
+  saveTasks();
   var card = document.getElementById("task-" + id);
   if (card) {
     if (t.completed) {
@@ -1024,6 +1033,7 @@ function saveTask() {
     tasks.push(newTask);
     showToast("Tarea creada correctamente", "success");
   }
+  saveTasks();
   document.getElementById("adminTaskTitle").value = "";
   document.getElementById("adminTaskDesc").value = "";
   document.getElementById("adminTaskDue").value = "";
@@ -1039,6 +1049,7 @@ function saveTask() {
 function deleteTask(id) {
   if (!confirm("¿Eliminar esta tarea?")) return;
   tasks = tasks.filter(function(t){ return t.id !== id; });
+  saveTasks();
   updateStats();
   refreshAllViews();
   showToast("Tarea eliminada", "success");
@@ -1047,6 +1058,7 @@ function deleteTask(id) {
 function deleteResource(id) {
   if (!confirm("¿Eliminar este recurso?")) return;
   resources = resources.filter(function(r){ return r.id !== id; });
+  saveResources();
   renderAdminResources();
   if (document.getElementById("view-subject-detail").style.display !== "none") {
     var detail = document.getElementById("view-subject-detail");
@@ -1070,6 +1082,7 @@ function addResource() {
   if (!valid) return;
   var newRes = {id:nextResId++,subjectClave:subj,type:type,title:title,author:author,link:link||"",fileData:resFileData,unit:unit,uploadedBy:"Tú",uploadedAt:new Date().toISOString().slice(0,10)};
   resources.push(newRes);
+  saveResources();
   document.getElementById("adminResTitle").value = "";
   document.getElementById("adminResAuthor").value = "";
   document.getElementById("adminResUnit").value = "";
@@ -1118,6 +1131,87 @@ function saveAdmins() {
   try {
     localStorage.setItem(ADMINS_STORAGE_KEY, JSON.stringify(admins));
   } catch (e) {}
+}
+function getNextId(list) {
+  if (!Array.isArray(list) || !list.length) return 1;
+  return list.reduce(function(maxId, item) {
+    return Math.max(maxId, Number(item.id) || 0);
+  }, 0) + 1;
+}
+function saveTasks() {
+  try {
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+  } catch (e) {}
+}
+function loadTasks() {
+  var fallback = defaultTasks();
+  try {
+    var raw = localStorage.getItem(TASKS_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(fallback));
+      return fallback;
+    }
+    var parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return fallback;
+    var clean = parsed.filter(function(t) {
+      return t && typeof t.title === "string" && typeof t.subjectClave === "string";
+    }).map(function(t) {
+      return {
+        id: Number(t.id) || 0,
+        subjectClave: t.subjectClave,
+        title: t.title,
+        desc: typeof t.desc === "string" ? t.desc : "Sin descripción.",
+        due: t.due ? new Date(t.due) : new Date(),
+        completed: !!t.completed,
+        fileData: t.fileData || null
+      };
+    }).filter(function(t) {
+      return t.id > 0 && !isNaN(t.due.getTime());
+    });
+    if (!clean.length) return fallback;
+    return clean;
+  } catch (e) {
+    return fallback;
+  }
+}
+function saveResources() {
+  try {
+    localStorage.setItem(RESOURCES_STORAGE_KEY, JSON.stringify(resources));
+  } catch (e) {}
+}
+function loadResources() {
+  var fallback = defaultResources();
+  try {
+    var raw = localStorage.getItem(RESOURCES_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(RESOURCES_STORAGE_KEY, JSON.stringify(fallback));
+      return fallback;
+    }
+    var parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return fallback;
+    var clean = parsed.filter(function(r) {
+      return r && typeof r.title === "string" && typeof r.subjectClave === "string";
+    }).map(function(r) {
+      return {
+        id: Number(r.id) || 0,
+        subjectClave: r.subjectClave,
+        type: r.type || "pdf",
+        title: r.title,
+        author: r.author || "",
+        link: r.link || "",
+        fileData: r.fileData || null,
+        unit: r.unit || "General",
+        uploadedBy: r.uploadedBy || "",
+        uploadedAt: r.uploadedAt || ""
+      };
+    }).filter(function(r) {
+      return r.id > 0;
+    });
+    if (!clean.length) return fallback;
+    return clean;
+  } catch (e) {
+    return fallback;
+  }
 }
 function loadAdmins() {
   var fallback = defaultAdmins();

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="227519aa-c07f-4a23-b538-7f756905a559" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="24" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "AmeliaDi"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/AmeliaDi/MarcyHub.git",
+    "accountId": "ab3120d0-21ce-460a-a736-f2a39dfffe56"
+  }
+}]]></component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.6305362729552195" />
+      <entry key="MS500" value="2.5639577063238708" />
+      <entry key="S2" value="3.6395452804059434" />
+      <entry key="S5" value="5.299578311170909" />
+      <entry key="S10" value="6.400903327188443" />
+      <entry key="S30" value="7.399253380852755" />
+      <entry key="S60" value="7.697067777447191" />
+      <entry key="M2" value="7.9254890662042285" />
+      <entry key="M5" value="8.305651884644956" />
+      <entry key="M10" value="8.57573535081514" />
+      <entry key="M15" value="8.696107289981445" />
+      <entry key="M30" value="8.836334407760152" />
+      <entry key="H1" value="8.914989425935568" />
+      <entry key="H2" value="8.956666973800488" />
+      <entry key="H4" value="8.9781222375091" />
+      <entry key="D1" value="8.996323992516341" />
+      <entry key="W1" value="8.999474123469337" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.4721366687392634" />
+      <entry key="MS500" value="2.5209661374071675" />
+      <entry key="S2" value="3.616463597275414" />
+      <entry key="S5" value="5.2803980959214245" />
+      <entry key="S10" value="6.387924292709246" />
+      <entry key="S30" value="7.393893890924075" />
+      <entry key="S60" value="7.694235602234559" />
+      <entry key="M2" value="7.924026310961303" />
+      <entry key="M5" value="8.305046433857996" />
+      <entry key="M10" value="8.575426570329467" />
+      <entry key="M15" value="8.695899715795154" />
+      <entry key="M30" value="8.836229637807712" />
+      <entry key="H1" value="8.914936768882079" />
+      <entry key="H2" value="8.956640573628428" />
+      <entry key="H4" value="8.978109019036165" />
+      <entry key="D1" value="8.996321786842339" />
+      <entry key="W1" value="8.999473808308949" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3IONeafKhfDOrKTfe7rquqXSLoy" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "master",
+    "javascript.preferred.runtime.type.id": "node",
+    "junie.onboarding.icon.badge.shown": "true",
+    "junie.plugin.stays.banner.dismissed": "true",
+    "last_opened_file_path": "C:/Users/MarcyWu/AppData/Roaming/Open Design/namespaces/release-stable-win/data/projects/f1b6cbc7-a7ba-4700-b178-d2d8e0698073",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-WS-262.9437.145" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="227519aa-c07f-4a23-b538-7f756905a559" name="Changes" comment="" />
+      <created>1787631751018</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1787631751018</updated>
+      <workItem from="1787631752129" duration="2028000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
