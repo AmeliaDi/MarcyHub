@@ -480,6 +480,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 
     <div class="view" id="view-subjects" data-od-id="subjects">
       <div id="subjectsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:var(--gap-md);"></div>
+      <div id="subjectsResourcesSection" style="margin-top:var(--gap-lg);"></div>
       <div id="view-subject-detail" style="display:none;"></div>
     </div>
 
@@ -581,6 +582,50 @@ function makeDate(d) { var dt = new Date(); dt.setDate(dt.getDate() + d); return
 function fmtDate(d) { return d.toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}); }
 function daysUntil(d) { var n = new Date(); n.setHours(0,0,0,0); var t = new Date(d); t.setHours(0,0,0,0); return Math.round((t - n) / 86400000); }
 function getSubject(c) { return subjects.find(function(s){ return s.clave === c; }); }
+function getClassDeadlineForTask(t) {
+  var dueDate = new Date(t.due);
+  if (isNaN(dueDate.getTime())) return null;
+  var deadline = new Date(dueDate);
+  var dayNames = ["Dom","Lun","Mar","Mie","Jue","Vie","Sab"];
+  var subject = getSubject(t.subjectClave);
+  var slotDay = dayNames[deadline.getDay()];
+  var classSlots = subject && Array.isArray(subject.horario)
+    ? subject.horario.filter(function(slot) { return slot && slot.dia === slotDay; })
+    : [];
+  if (classSlots.length) {
+    var latestEnd = classSlots.reduce(function(maxEnd, slot) {
+      var endHour = Number(slot.fin) || 0;
+      return endHour > maxEnd ? endHour : maxEnd;
+    }, 0);
+    deadline.setHours(latestEnd, 0, 0, 0);
+  } else {
+    deadline.setHours(23, 59, 59, 999);
+  }
+  return deadline;
+}
+function autoCompleteTasksByClassTime(options) {
+  var opts = options || {};
+  var now = opts.now instanceof Date ? opts.now : new Date();
+  var changed = 0;
+  tasks.forEach(function(t) {
+    if (!t || t.completed) return;
+    var deadline = getClassDeadlineForTask(t);
+    if (deadline && now >= deadline) {
+      t.completed = true;
+      changed++;
+    }
+  });
+  if (!changed) return false;
+  saveTasks();
+  if (opts.refresh !== false) {
+    refreshAllViews();
+    updateStats();
+  }
+  if (!opts.silent) {
+    showToast(changed === 1 ? "Se marcó 1 tarea como entregada" : "Se marcaron " + changed + " tareas como entregadas", "success");
+  }
+  return true;
+}
 function getTaskUrgency(t) {
   if (t.completed) return "completed";
   var d = daysUntil(t.due);
@@ -679,7 +724,7 @@ function renderSchedule() {
       block.className = "subject-block stagger-enter";
       var txtColor = subj.darkText ? "color:var(--fg);" : "color:var(--surface);";
       block.style.cssText = "top:" + top + "px;height:" + height + "px;background:" + subj.color + ";" + txtColor;
-      block.innerHTML = '<span class="block-name">' + esc(subj.nombre) + '</span><span class="block-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(slot.aula) + '</span>';
+      block.innerHTML = '<span class="block-name">' + esc(subj.nombre) + '</span><span class="block-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(slot.aula) + '</span><span class="block-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.761 0 5-2.239 5-5S14.761 2 12 2 7 4.239 7 7s2.239 5 5 5z"/><path d="M3 22c0-4.418 4.03-8 9-8s9 3.582 9 8"/></svg>Maestro: ' + esc(subj.profesores) + '</span>';
       block.onclick = function() { switchView("subjects"); setTimeout(function(){ showSubjectDetail(subj.clave); }, 200); };
       col.appendChild(block);
     });
@@ -712,7 +757,7 @@ function renderAgenda() {
         var txtColor = s.subj.darkText ? "color:var(--fg);" : "";
         html += '<div class="agenda-slot"><div class="agenda-time">' + String(s.slot.inicio).padStart(2,"0") + ":00 – " + String(s.slot.fin).padStart(2,"0") + ':00</div>'
           + '<div class="agenda-info"><div class="agenda-name" style="' + txtColor + 'background:' + s.subj.color + ';display:inline-block;padding:2px 10px;border-radius:6px;font-size:13px;color:var(--surface);">' + esc(s.subj.nombre) + '</div>'
-          + '<div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(s.slot.aula) + '</div></div></div>';
+          + '<div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(s.slot.aula) + '</div><div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.761 0 5-2.239 5-5S14.761 2 12 2 7 4.239 7 7s2.239 5 5 5z"/><path d="M3 22c0-4.418 4.03-8 9-8s9 3.582 9 8"/></svg>Maestro: ' + esc(s.subj.profesores) + '</div></div></div>';
       });
     }
     html += '</div>';
@@ -803,6 +848,7 @@ function refreshAllViews() {
   var activeTab = document.querySelector("#taskFilterTabs .filter-tab.active");
   renderTasks(activeTab ? activeTab.dataset.filter : "all");
   renderAllTasks();
+  renderSubjectsGrid();
   renderAdminTasks();
   if (document.getElementById("view-subject-detail").style.display !== "none") {
     var detail = document.getElementById("view-subject-detail");
@@ -864,6 +910,29 @@ function renderSubjectsGrid() {
       + '</div></div>';
   }).join("");
   applyStagger(g);
+  renderSubjectsResourcesSection();
+}
+
+function renderSubjectsResourcesSection() {
+  var section = document.getElementById("subjectsResourcesSection");
+  if (!section) return;
+  var sorted = resources.slice().sort(function(a,b){ return a.subjectClave.localeCompare(b.subjectClave) || a.title.localeCompare(b.title); });
+  if (!sorted.length) {
+    section.innerHTML = '<div class="detail-section"><div class="section-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Recursos</div><div class="section-body"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg><p>No hay recursos disponibles</p></div></div></div>';
+    return;
+  }
+  section.innerHTML = '<div class="detail-section"><div class="section-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Recursos</div><div class="section-body"><div id="subjectsResourcesList">' + sorted.map(function(r) {
+    var subj = getSubject(r.subjectClave);
+    return '<div class="resource-item"><div class="resource-icon">' + getResIcon(r.type) + '</div>'
+      + '<div class="resource-info"><div class="res-title">' + esc(r.title) + '</div>'
+      + '<div class="res-author">' + esc(r.author) + '</div>'
+      + '<div class="res-meta"><span>' + esc((subj ? subj.clave + ' · ' + subj.nombre : r.subjectClave)) + '</span><span>' + esc(r.unit) + '</span><span>' + esc(r.type.toUpperCase()) + '</span></div></div>'
+      + '<div class="res-actions">'
+      + (r.type === "link" ? '<a href="' + esc(r.link) + '" target="_blank" rel="noopener" class="btn btn-secondary btn-sm">Abrir</a>'
+        : '<button class="btn btn-secondary btn-sm" onclick="openPdfModal(' + r.id + ')">Ver</button>')
+      + '<button class="btn btn-ghost btn-sm" onclick="downloadResource(' + r.id + ')" aria-label="Descargar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>'
+      + '</div></div>';
+  }).join("") + '</div></div></div>';
 }
 
 function showSubjectDetail(clave) {
@@ -1294,6 +1363,7 @@ function syncStateFromServer() {
     })
     .then(function(data) {
       replaceStateFromServer(data);
+      autoCompleteTasksByClassTime({ silent: true });
       refreshAllViews();
       updateStats();
     })
@@ -1715,11 +1785,15 @@ function showSkeletons() {
 
 setTimeout(function() {
   renderSchedule();
+  autoCompleteTasksByClassTime({ silent: true, refresh: false });
   renderTasks("all");
   updateStats();
   setupDragDrop("taskFileZone","taskFileName","task");
   setupDragDrop("resFileZone","resFileName","res");
   syncStateFromServer();
+  setInterval(function() {
+    autoCompleteTasksByClassTime({ silent: true });
+  }, 60000);
 }, 600);
 
 Object.assign(window, {
