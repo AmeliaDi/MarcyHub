@@ -635,6 +635,8 @@ function defaultTasks() {
 var TASKS_STORAGE_KEY = "marcyhub_tasks_v1";
 var RESOURCES_STORAGE_KEY = "marcyhub_resources_v1";
 var ADMINS_STORAGE_KEY = "marcyhub_admins_v1";
+var API_STATE_URL = "/api/state";
+var API_ADMIN_LOGIN_URL = "/api/admin-login";
 var tasks = loadTasks();
 var resources = loadResources();
 var nextTaskId = getNextId(tasks), isAdmin = false, editingTaskId = null;
@@ -642,6 +644,7 @@ var nextResId = getNextId(resources);
 var currentView = "dashboard", prevView = "dashboard", isSwitching = false, searchPrevView = null;
 var taskFileData = null, resFileData = null;
 var admins = loadAdmins();
+var syncStateTimer = null;
 
 var dayIdx = {Lun:1,Mar:2,Mie:3,Jue:4,Vie:5};
 var hours = [8,9,10,11,12,13,14,15,16,17];
@@ -1132,6 +1135,7 @@ function saveAdmins() {
   try {
     localStorage.setItem(ADMINS_STORAGE_KEY, JSON.stringify(admins));
   } catch (e) {}
+  scheduleStateSync();
 }
 function getNextId(list) {
   if (!Array.isArray(list) || !list.length) return 1;
@@ -1143,6 +1147,7 @@ function saveTasks() {
   try {
     localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
   } catch (e) {}
+  scheduleStateSync();
 }
 function loadTasks() {
   var fallback = defaultTasks();
@@ -1179,6 +1184,120 @@ function saveResources() {
   try {
     localStorage.setItem(RESOURCES_STORAGE_KEY, JSON.stringify(resources));
   } catch (e) {}
+  scheduleStateSync();
+}
+function serializeTasksForApi() {
+  return tasks.map(function(t) {
+    return {
+      id: Number(t.id) || 0,
+      subjectClave: t.subjectClave,
+      title: t.title,
+      desc: t.desc,
+      due: t.due instanceof Date ? t.due.toISOString() : new Date(t.due).toISOString(),
+      completed: !!t.completed,
+      fileData: t.fileData || null
+    };
+  }).filter(function(t) { return t.id > 0; });
+}
+function serializeResourcesForApi() {
+  return resources.map(function(r) {
+    return {
+      id: Number(r.id) || 0,
+      subjectClave: r.subjectClave,
+      type: r.type,
+      title: r.title,
+      author: r.author,
+      link: r.link,
+      fileData: r.fileData || null,
+      unit: r.unit,
+      uploadedBy: r.uploadedBy,
+      uploadedAt: r.uploadedAt
+    };
+  }).filter(function(r) { return r.id > 0; });
+}
+function syncStateNow() {
+  return fetch(API_STATE_URL, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      tasks: serializeTasksForApi(),
+      resources: serializeResourcesForApi(),
+      admins: admins
+    })
+  }).catch(function() {});
+}
+function scheduleStateSync() {
+  if (syncStateTimer) clearTimeout(syncStateTimer);
+  syncStateTimer = setTimeout(function() {
+    syncStateNow();
+  }, 250);
+}
+function replaceStateFromServer(payload) {
+  if (!payload || typeof payload !== "object") return;
+  if (Array.isArray(payload.tasks)) {
+    tasks = payload.tasks.map(function(t) {
+      return {
+        id: Number(t.id) || 0,
+        subjectClave: t.subjectClave,
+        title: t.title,
+        desc: typeof t.desc === "string" ? t.desc : "Sin descripción.",
+        due: t.due ? new Date(t.due) : new Date(),
+        completed: !!t.completed,
+        fileData: t.fileData || null
+      };
+    }).filter(function(t) {
+      return t.id > 0 && typeof t.subjectClave === "string" && typeof t.title === "string" && !isNaN(t.due.getTime());
+    });
+  }
+  if (Array.isArray(payload.resources)) {
+    resources = payload.resources.map(function(r) {
+      return {
+        id: Number(r.id) || 0,
+        subjectClave: r.subjectClave,
+        type: r.type || "pdf",
+        title: r.title,
+        author: r.author || "",
+        link: r.link || "",
+        fileData: r.fileData || null,
+        unit: r.unit || "General",
+        uploadedBy: r.uploadedBy || "",
+        uploadedAt: r.uploadedAt || ""
+      };
+    }).filter(function(r) {
+      return r.id > 0 && typeof r.subjectClave === "string" && typeof r.title === "string";
+    });
+  }
+  if (Array.isArray(payload.admins)) {
+    admins = payload.admins.map(function(a) {
+      return {
+        email: normalizeEmail(a.email),
+        password: String(a.password || ""),
+        createdAt: a.createdAt || ""
+      };
+    }).filter(function(a) {
+      return !!a.email && !!a.password;
+    });
+  }
+  nextTaskId = getNextId(tasks);
+  nextResId = getNextId(resources);
+  try {
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+    localStorage.setItem(RESOURCES_STORAGE_KEY, JSON.stringify(resources));
+    localStorage.setItem(ADMINS_STORAGE_KEY, JSON.stringify(admins));
+  } catch (e) {}
+}
+function syncStateFromServer() {
+  return fetch(API_STATE_URL, {method: "GET"})
+    .then(function(res) {
+      if (!res.ok) throw new Error("state_error");
+      return res.json();
+    })
+    .then(function(data) {
+      replaceStateFromServer(data);
+      refreshAllViews();
+      updateStats();
+    })
+    .catch(function() {});
 }
 function loadResources() {
   var fallback = defaultResources();
@@ -1340,18 +1459,35 @@ function adminLogin() {
   if (!email || !emailRegex.test(email)) { showFieldError("authEmailError"); valid = false; }
   if (!pass || pass.length < 4) { showFieldError("authPassError"); valid = false; }
   if (!valid) return;
-  var admin = getAdminByEmail(email);
-  if (!admin || admin.password !== pass) {
+  fetch(API_ADMIN_LOGIN_URL, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({email: email, password: pass})
+  }).then(function(res) {
+    if (!res.ok) throw new Error("login_error");
+    return res.json();
+  }).then(function(data) {
+    if (!data || !data.ok) throw new Error("invalid_login");
+    isAdmin = true;
+    document.getElementById("authOverlay").style.display = "none";
+    document.getElementById("authEmail").value = "";
+    document.getElementById("authPassword").value = "";
+    switchView("admin");
+    showToast("Sesión de administrador iniciada", "success");
+  }).catch(function() {
+    var localAdmin = getAdminByEmail(email);
+    if (localAdmin && localAdmin.password === pass) {
+      isAdmin = true;
+      document.getElementById("authOverlay").style.display = "none";
+      document.getElementById("authEmail").value = "";
+      document.getElementById("authPassword").value = "";
+      switchView("admin");
+      showToast("Sesión de administrador iniciada (modo local)", "success");
+      return;
+    }
     showFieldError("authPassError");
-    showToast("Credenciales de administrador inválidas", "danger");
-    return;
-  }
-  isAdmin = true;
-  document.getElementById("authOverlay").style.display = "none";
-  document.getElementById("authEmail").value = "";
-  document.getElementById("authPassword").value = "";
-  switchView("admin");
-  showToast("Sesión de administrador iniciada", "success");
+    showToast("Credenciales de administrador inválidas", "error");
+  });
 }
 
 function closeAuth() {
@@ -1583,6 +1719,7 @@ setTimeout(function() {
   updateStats();
   setupDragDrop("taskFileZone","taskFileName","task");
   setupDragDrop("resFileZone","resFileName","res");
+  syncStateFromServer();
 }, 600);
 
 Object.assign(window, {
