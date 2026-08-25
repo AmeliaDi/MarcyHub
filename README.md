@@ -1,4 +1,4 @@
-# MarcyHub
+s# MarcyHub
 
 Plataforma estudiantil en una sola página (`index.html`) para visualizar horario, tareas y recursos, con panel de administración y persistencia local.
 
