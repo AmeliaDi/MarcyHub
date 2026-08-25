@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UniHub · Plataforma Estudiantil</title>
+  <style>
+    :root {
+      --bg:      #f0f2f5;
+      --surface: #ffffff;
+      --fg:      #0a1628;
+      --muted:   #5a6a80;
+      --border:  #e0e4ea;
+      --accent:  #FF6B4A;
+      --accent-soft: color-mix(in oklch, var(--accent) 14%, transparent);
+      --fg-soft:     color-mix(in oklch, var(--fg) 6%, transparent);
+--primary:       #0B2A6B;
+      --primary-soft:  color-mix(in oklch, var(--primary) 8%, transparent);
+      --danger:        #d92d20;
+      --warning:       #F18F01;
+      --info:          #2E86AB;
+      --subj-1:        #0B2A6B;
+      --subj-2:        #2E86AB;
+      --subj-3:        #A23B72;
+      --subj-4:        #F18F01;
+      --font-display: "Iowan Old Style", Charter, Georgia, "Times New Roman", serif;
+      --font-body:    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono:    ui-monospace, "JetBrains Mono", "SF Mono", Menlo, monospace;
+      --fs-h1: clamp(32px, 4vw, 44px);
+      --fs-h2: clamp(24px, 3vw, 32px);
+      --fs-h3: 18px;
+      --fs-lead: 15px;
+      --fs-body: 14px;
+      --fs-meta: 12px;
+      --gap-xs: 6px; --gap-sm: 10px; --gap-md: 16px; --gap-lg: 24px; --gap-xl: 40px;
+      --radius: 8px; --radius-lg: 14px; --radius-xl: 20px;
+      --sidebar-w: 240px; --topbar-h: 56px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.5; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; }
+    p { text-wrap: pretty; margin: 0; }
+    h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+    ul { list-style: none; margin: 0; padding: 0; }
+    .app { display: flex; height: 100vh; }
+    .sidebar { width: var(--sidebar-w); background: var(--primary); color: var(--surface); display: flex; flex-direction: column; flex-shrink: 0; z-index: 20; transition: transform 0.25s ease; }
+    .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+    .topbar { height: var(--topbar-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gap-lg); flex-shrink: 0; z-index: 10; position: relative; }
+.topbar::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent 60%); opacity: 0.5; }
+    .content-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--gap-lg); scroll-behavior: smooth; background-image: radial-gradient(circle, color-mix(in oklch, var(--primary) 5%, transparent) 1px, transparent 1px); background-size: 24px 24px; background-position: 0 0; }
+    .sidebar-brand { padding: 20px var(--gap-lg); font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; border-bottom: 1px solid color-mix(in oklch, var(--surface) 10%, transparent); display: flex; align-items: center; gap: 10px; position: relative; }
+.sidebar-brand::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent 80%); opacity: 0.6; }
+    .sidebar-brand .brand-icon { width: 32px; height: 32px; background: var(--accent); border-radius: var(--radius); display: grid; place-items: center; font-family: var(--font-mono); font-size: 14px; font-weight: 700; }
+    .sidebar-nav { flex: 1; padding: var(--gap-md) var(--gap-sm); }
+    .sidebar-nav .nav-section { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: color-mix(in oklch, var(--surface) 40%, transparent); padding: 16px 12px 8px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); color: color-mix(in oklch, var(--surface) 65%, transparent); font-size: 14px; font-weight: 450; cursor: pointer; transition: all 0.15s ease; margin-bottom: 2px; }
+    .nav-item:hover { background: color-mix(in oklch, var(--surface) 8%, transparent); color: var(--surface); }
+    .nav-item.active { background: color-mix(in oklch, var(--surface) 14%, transparent); color: var(--surface); font-weight: 550; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.7; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-badge { margin-left: auto; background: var(--accent); color: var(--surface); font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 999px; min-width: 20px; text-align: center; }
+    .topbar-left { display: flex; align-items: center; gap: var(--gap-md); }
+    .page-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+    .search-box { display: flex; align-items: center; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 12px; gap: 8px; width: 280px; transition: border-color 0.15s ease; }
+    .search-box:focus-within { border-color: var(--primary); }
+    .search-box svg { width: 16px; height: 16px; color: var(--muted); flex-shrink: 0; }
+    .search-box input { border: 0; outline: 0; background: transparent; font: inherit; font-size: 13px; color: var(--fg); width: 100%; }
+    .search-box input::placeholder { color: var(--muted); }
+    .topbar-right { display: flex; align-items: center; gap: var(--gap-md); }
+    .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: var(--surface); display: grid; place-items: center; font-size: 14px; font-weight: 600; }
+    .view { display: none; animation: fadeSlideIn 0.3s ease; }
+    .view.active { display: block; }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cardEnter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.task-card { animation: cardEnter 0.35s ease both; }
+.task-card:nth-child(1) { animation-delay: 0.04s; }
+.task-card:nth-child(2) { animation-delay: 0.08s; }
+.task-card:nth-child(3) { animation-delay: 0.12s; }
+.task-card:nth-child(4) { animation-delay: 0.16s; }
+.task-card:nth-child(5) { animation-delay: 0.20s; }
+.task-card:nth-child(6) { animation-delay: 0.24s; }
+.task-card:nth-child(7) { animation-delay: 0.28s; }
+.task-card:nth-child(8) { animation-delay: 0.32s; }
+.task-card:nth-child(9) { animation-delay: 0.36s; }
+.task-card:nth-child(10) { animation-delay: 0.40s; }
+.task-card:nth-child(11) { animation-delay: 0.44s; }
+    .dash-grid { display: grid; grid-template-columns: 1fr 380px; gap: var(--gap-lg); align-items: start; }
+    .schedule-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .schedule-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .schedule-header h3 { font-size: var(--fs-h3); font-weight: 600; }
+    .week-nav { display: flex; gap: 4px; }
+    .week-nav button { width: 32px; height: 32px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--fg); display: grid; place-items: center; font-size: 14px; transition: all 0.15s ease; }
+    .week-nav button:hover { background: var(--fg-soft); border-color: var(--fg); }
+    .schedule-body { padding: 12px 8px 12px 0; overflow-x: auto; }
+    .timetable { display: grid; grid-template-columns: 56px repeat(5, 1fr); min-width: 700px; }
+    .timetable .time-cell { font-family: var(--font-mono); font-size: 11px; color: var(--muted); text-align: right; padding: 0 10px; height: 52px; display: flex; align-items: flex-start; justify-content: flex-end; padding-top: 2px; }
+    .timetable .day-header { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); text-align: center; padding: 8px 0 12px; border-bottom: 1px solid var(--border); font-weight: 600; }
+    .timetable .day-col { position: relative; border-left: 1px solid var(--border); }
+.timetable .hour-line { height: 52px; border-top: 1px solid var(--border); transition: background 0.12s ease; }
+.timetable .hour-line:hover { background: color-mix(in oklch, var(--primary) 3%, transparent); }
+.timetable .hour-line:first-child { border-top: 0; }
+    .subject-block { position: absolute; left: 3px; right: 3px; border-radius: 6px; padding: 6px 8px; font-size: 12px; font-weight: 500; line-height: 1.35; color: var(--surface); overflow: hidden; cursor: pointer; transition: transform 0.12s ease, box-shadow 0.12s ease; z-index: 2; display: flex; flex-direction: column; justify-content: flex-start; }
+    .subject-block:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 3; }
+    .subject-block .block-name { font-weight: 600; font-size: 11px; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .subject-block .block-room { font-size: 10px; opacity: 0.8; margin-top: 2px; }
+    .tasks-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .tasks-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .tasks-header h3 { font-size: var(--fs-h3); font-weight: 600; }
+    .filter-tabs { display: flex; gap: 4px; background: var(--bg); border-radius: var(--radius); padding: 3px; }
+    .filter-tab { padding: 5px 12px; border-radius: 6px; border: 0; background: transparent; font-size: 12px; font-weight: 500; color: var(--muted); transition: all 0.15s ease; }
+    .filter-tab.active { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .filter-tab:hover:not(.active) { color: var(--fg); }
+    .tasks-list { padding: 12px; max-height: 520px; overflow-y: auto; }
+    .task-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; cursor: pointer; transition: all 0.15s ease; position: relative; overflow: hidden; }
+    .task-card:hover { border-color: var(--muted); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .task-card.completed { opacity: 0.55; }
+    .task-card.completed .task-title { text-decoration: line-through; }
+    .task-card .task-color-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+    .task-card .task-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .task-card .task-subject { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .task-card .task-title { font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 6px; }
+    .task-card .task-desc { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
+    .task-card .task-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .task-card .task-due { font-family: var(--font-mono); font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+    .task-due.urgent { color: var(--accent); }
+    .task-due.warning { color: var(--warning); }
+    .task-due.normal { color: var(--muted); }
+    .task-card .task-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); background: transparent; display: grid; place-items: center; flex-shrink: 0; transition: all 0.2s ease; cursor: pointer; }
+    .task-card .task-check:hover { border-color: var(--accent); }
+    .task-card.completed .task-check { background: var(--accent); border-color: var(--accent); }
+    .task-check svg { width: 12px; height: 12px; color: var(--surface); opacity: 0; transition: opacity 0.2s ease; }
+    .task-card.completed .task-check svg { opacity: 1; }
+    @keyframes checkPop { 0% { transform: scale(0); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+    .task-card.completing .task-check svg { animation: checkPop 0.3s ease; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gap-md); margin-bottom: var(--gap-lg); }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; display: flex; align-items: center; gap: 14px; position: relative; overflow: hidden; }
+.stat-card::after { content: ""; position: absolute; right: -12px; bottom: -16px; font-family: var(--font-display); font-size: 72px; color: color-mix(in oklch, var(--primary) 4%, transparent); line-height: 1; pointer-events: none; user-select: none; }
+.stat-card:nth-child(1)::after { content: "Σ"; }
+.stat-card:nth-child(2)::after { content: "∫"; }
+.stat-card:nth-child(3)::after { content: "∂"; }
+.stat-card:nth-child(4)::after { content: "π"; }
+    .stat-card .stat-icon { width: 42px; height: 42px; border-radius: var(--radius); display: grid; place-items: center; flex-shrink: 0; }
+    .stat-card .stat-icon svg { width: 20px; height: 20px; }
+    .stat-card .stat-info .stat-val { font-family: var(--font-display); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+    .stat-card .stat-info .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 3px; }
+    .subject-header-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 24px 28px; margin-bottom: var(--gap-lg); }
+    .subject-header-card .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; margin-bottom: 16px; transition: color 0.15s ease; }
+    .subject-header-card .back-btn:hover { color: var(--fg); }
+    .subject-header-card .back-btn svg { width: 16px; height: 16px; }
+    .subject-header-card h2 { font-family: var(--font-display); font-size: var(--fs-h2); margin-bottom: 4px; }
+    .subject-header-card .professor { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+    .subject-meta-row { display: flex; gap: var(--gap-lg); flex-wrap: wrap; margin-top: 12px; }
+    .subject-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+    .subject-meta-item svg { width: 16px; height: 16px; opacity: 0.7; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-lg); }
+    .detail-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
+    .detail-section .section-head { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .detail-section .section-head svg { width: 18px; height: 18px; color: var(--muted); }
+    .detail-section .section-body { padding: 16px 20px; }
+    .resource-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .resource-item:last-child { border-bottom: 0; }
+    .resource-icon { width: 40px; height: 40px; border-radius: var(--radius); background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; }
+    .resource-icon svg { width: 18px; height: 18px; }
+    .resource-info { flex: 1; min-width: 0; }
+    .resource-info .res-title { font-size: 14px; font-weight: 600; }
+    .resource-info .res-author { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .resource-item .btn { font-size: 12px; padding: 6px 14px; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-lg); }
+    .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 24px 28px; }
+    .form-card h3 { font-size: var(--fs-h3); font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-group label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.03em; }
+    .form-group input, .form-group select, .form-group textarea { padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--fg); font: inherit; font-size: 14px; transition: border-color 0.15s ease; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: 2px solid var(--primary-soft); border-color: var(--primary); }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .form-row { display: flex; gap: var(--gap-md); }
+    .form-row .form-group { flex: 1; }
+    .auth-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 60%, transparent); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .auth-card { background: var(--surface); border-radius: var(--radius-xl); padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: fadeSlideIn 0.3s ease; }
+    .auth-card h2 { font-family: var(--font-display); font-size: 24px; margin-bottom: 4px; }
+    .auth-card .auth-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .auth-card .form-group { margin-bottom: 18px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: var(--radius); border: 1px solid transparent; font-size: 13px; font-weight: 500; letter-spacing: -0.005em; transition: all 0.15s ease; white-space: nowrap; }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+    .btn-primary:hover { background: color-mix(in oklch, var(--accent) 88%, black); }
+    .btn-secondary { background: transparent; color: var(--fg); border-color: var(--border); }
+    .btn-secondary:hover { border-color: var(--fg); background: var(--fg-soft); }
+    .btn-ghost { background: transparent; color: var(--fg); border-color: transparent; padding-inline: 8px; }
+    .btn-ghost:hover { background: var(--fg-soft); }
+    .btn-danger { background: transparent; color: var(--danger); border-color: color-mix(in oklch, var(--danger) 30%, transparent); }
+    .btn-danger:hover { background: color-mix(in oklch, var(--danger) 8%, transparent); border-color: var(--danger); }
+    .btn-full { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; margin-top: 8px; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.5s ease; position: relative; overflow: hidden; }
+.progress-fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, color-mix(in oklch, var(--surface) 30%, transparent) 50%, transparent 100%); animation: shimmer 2s ease-in-out infinite; }
+@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .tag { display: inline-flex; align-items: center; padding: 4px 10px; background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; transition: box-shadow 0.15s ease; }
+    .card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    .menu-toggle { display: none; width: 36px; height: 36px; background: transparent; border: 0; padding: 6px; cursor: pointer; flex-shrink: 0; flex-direction: column; justify-content: center; }
+    .menu-toggle span { display: block; width: 100%; height: 2px; background: var(--fg); border-radius: 2px; transition: all 0.2s ease; }
+    .menu-toggle span + span { margin-top: 5px; }
+    .ds-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .ds-table th, .ds-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    .ds-table th { color: var(--muted); font-weight: 500; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .ds-table tbody tr:hover { background: var(--fg-soft); }
+    @media (max-width: 920px) {
+      .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .menu-toggle { display: flex; }
+      .dash-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .detail-grid, .admin-grid { grid-template-columns: 1fr; }
+      .search-box { width: 180px; }
+      .content-scroll { padding: var(--gap-md); }
+    }
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: 1fr 1fr; }
+      .search-box { width: 140px; }
+      .timetable { min-width: 560px; }
+      .topbar { padding: 0 var(--gap-sm); }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand"><div class="brand-icon">UH</div><span>UniHub</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <a class="nav-item active" data-view="dashboard" onclick="switchView('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Inicio
+      </a>
+      <a class="nav-item" data-view="tasks" onclick="switchView('tasks')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Tareas <span class="nav-badge" id="pending-badge">4</span>
+      </a>
+      <a class="nav-item" data-view="subjects" onclick="switchView('subjects')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        Materias
+      </a>
+      <div class="nav-section">Administracion</div>
+      <a class="nav-item" data-view="admin" onclick="switchView('admin')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+        Admin
+      </a>
+    </nav>
+  </aside>
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()" aria-label="Menu"><span></span><span></span><span></span></button>
+        <span class="page-title" id="pageTitle">Inicio</span>
+      </div>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" placeholder="Buscar materia o tarea..." id="searchInput" oninput="handleSearch()" />
+      </div>
+      <div class="topbar-right"><div class="user-avatar" title="Estudiante">AE</div></div>
+    </header>
+    <div class="content-scroll" id="contentScroll">
+      <div class="view active" id="view-dashboard" data-od-id="dashboard">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-icon" style="background:var(--primary-soft);color:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="stat-info"><div class="stat-val">4</div><div class="stat-lbl">Materias este semestre</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:var(--accent-soft);color:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="stat-info"><div class="stat-val" id="pending-count">4</div><div class="stat-lbl">Tareas pendientes</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:color-mix(in oklch, var(--warning) 12%, transparent);color:var(--warning)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="stat-info"><div class="stat-val" id="completed-count">3</div><div class="stat-lbl">Tareas entregadas</div></div></div>
+          <div class="stat-card"><div class="stat-icon" style="background:color-mix(in oklch, var(--info) 12%, transparent);color:var(--info)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20V10M18 20V4M6 20v-4"/></svg></div><div class="stat-info"><div class="stat-val" id="progress-pct">43%</div><div class="stat-lbl">Avance del semestre</div><div class="progress-bar"><div class="progress-fill" style="width:43%"></div></div></div></div>
+        </div>
+        <div class="dash-grid">
+          <div class="schedule-card" data-od-id="schedule">
+            <div class="schedule-header"><h3>Horario semanal</h3><div class="week-nav"><button>&larr;</button><button>&rarr;</button></div></div>
+            <div class="schedule-body"><div class="timetable" id="timetable"></div></div>
+          </div>
+          <div class="tasks-panel" data-od-id="tasks-panel">
+            <div class="tasks-header"><h3>Tareas pendientes</h3>
+              <div class="filter-tabs" id="taskFilterTabs">
+                <button class="filter-tab active" data-filter="all" onclick="filterTasks('all',this)">Todas</button>
+                <button class="filter-tab" data-filter="pending" onclick="filterTasks('pending',this)">Pendientes</button>
+                <button class="filter-tab" data-filter="completed" onclick="filterTasks('completed',this)">Entregadas</button>
+              </div>
+            </div>
+            <div class="tasks-list" id="tasksList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="view" id="view-tasks" data-od-id="tasks">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:20px 24px;margin-bottom:var(--gap-lg);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <h3 style="font-size:18px;font-weight:600;">Todas las tareas</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="tasksSubjectFilter"></div>
+        </div>
+        <div id="allTasksList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--gap-md);"></div>
+      </div>
+      <div class="view" id="view-subjects" data-od-id="subjects">
+        <div id="subjectsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--gap-md);"></div>
+        <div class="view" id="view-subject-detail" style="margin-top:0;"></div>
+      </div>
+      <div class="view" id="view-admin" data-od-id="admin">
+        <div class="admin-grid">
+          <div class="form-card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:20px;height:20px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Crear / Editar tarea</h3>
+            <div class="form-group"><label>Materia</label><select id="adminTaskSubject"><option value="306">306 · Calculo Diferencial e Integral III</option><option value="307">307 · Estructura de Datos y Algoritmos</option><option value="308">308 · Probabilidad</option><option value="305">305 · Algebra Lineal II</option></select></div>
+            <div class="form-group"><label>Titulo de la tarea</label><input type="text" id="adminTaskTitle" placeholder="Ej: Serie de ejercicios 5" /></div>
+            <div class="form-group"><label>Descripcion</label><textarea id="adminTaskDesc" placeholder="Instrucciones y detalles..."></textarea></div>
+            <div class="form-row"><div class="form-group"><label>Fecha de entrega</label><input type="date" id="adminTaskDue" /></div><div class="form-group"><label>Archivo adjunto (opcional)</label><input type="text" id="adminTaskFile" placeholder="URL o nombre de archivo" /></div></div>
+            <button class="btn btn-primary" onclick="createTask()">Crear tarea</button>
+          </div>
+          <div class="form-card">
+            <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:20px;height:20px;"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>Subir recurso bibliografico</h3>
+            <div class="form-group"><label>Materia</label><select id="adminResSubject"><option value="306">306 · Calculo Diferencial e Integral III</option><option value="307">307 · Estructura de Datos y Algoritmos</option><option value="308">308 · Probabilidad</option><option value="305">305 · Algebra Lineal II</option></select></div>
+            <div class="form-group"><label>Titulo del libro / recurso</label><input type="text" id="adminResTitle" placeholder="Ej: Calculo de varias variables" /></div>
+            <div class="form-group"><label>Autor(es)</label><input type="text" id="adminResAuthor" placeholder="Ej: James Stewart" /></div>
+            <div class="form-group"><label>Enlace o archivo</label><input type="text" id="adminResLink" placeholder="URL o nombre de archivo PDF" /></div>
+            <button class="btn btn-primary" onclick="addResource()">Agregar recurso</button>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xl);padding:20px 24px;margin-top:var(--gap-lg);">
+          <h3 style="font-size:18px;font-weight:600;margin-bottom:16px;">Tareas creadas</h3>
+          <div id="adminTasksList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="auth-overlay" id="authOverlay" style="display:none;">
+  <div class="auth-card">
+    <h2>Acceso administrador</h2>
+    <p class="auth-sub">Ingresa tus credenciales para gestionar tareas y recursos.</p>
+    <div class="form-group"><label>Correo institucional</label><input type="email" id="authEmail" placeholder="profesor@enes.unam.mx" /></div>
+    <div class="form-group"><label>Contrasena</label><input type="password" id="authPassword" placeholder="••••••••" /></div>
+    <button class="btn btn-primary btn-full" onclick="adminLogin()">Iniciar sesion</button>
+    <p style="text-align:center;margin-top:16px;font-size:12px;color:var(--muted);"><a href="#" onclick="closeAuth()" style="color:var(--muted);">Cancelar</a></p>
+  </div>
+</div>
+<script>
+const subjects=[{clave:"306",grupo:"3001",nombre:"Calculo Diferencial e Integral III",profesores:"Isaac Arelio Rios / Tishbe Pilarh Herrera Ramirez",color:"var(--subj-1)",horario:[{dia:"Lun",inicio:10,fin:12,aula:"VI-401"},{dia:"Mar",inicio:10,fin:12,aula:"VI-401"},{dia:"Mie",inicio:10,fin:12,aula:"VI-401"},{dia:"Jue",inicio:10,fin:12,aula:"VI-401"},{dia:"Vie",inicio:12,fin:14,aula:"VI-401"}]},{clave:"307",grupo:"3001",nombre:"Estructura de Datos y Algoritmos",profesores:"Jorge Armando Ramirez Diaz",color:"var(--subj-2)",horario:[{dia:"Mar",inicio:15,fin:17,aula:"V-303 (COMP)"},{dia:"Mie",inicio:15,fin:17,aula:"V-303 (COMP)"},{dia:"Jue",inicio:15,fin:17,aula:"V-303 (COMP)"},{dia:"Vie",inicio:15,fin:17,aula:"V-303 (COMP)"}]},{clave:"308",grupo:"3001",nombre:"Probabilidad",profesores:"Mario Santana Cibrian",color:"var(--subj-3)",horario:[{dia:"Mar",inicio:8,fin:10,aula:"VI-401"},{dia:"Mie",inicio:12,fin:14,aula:"VI-401"},{dia:"Vie",inicio:10,fin:12,aula:"VI-401"}]},{clave:"305",grupo:"3001",nombre:"Algebra Lineal II",profesores:"Amanda Montejano Cantoral / Juan Carlos Diaz Patino",color:"var(--subj-4)",horario:[{dia:"Lun",inicio:12,fin:14,aula:"VI-401"},{dia:"Mar",inicio:12,fin:14,aula:"VI-401"},{dia:"Jue",inicio:12,fin:14,aula:"VI-401"}]}];
+const resources=[{subjectClave:"306",title:"Calculo de varias variables",author:"James Stewart",link:"stewart-calculo-var.pdf"},{subjectClave:"306",title:"Analisis Vectorial",author:"Murray R. Spiegel",link:"spiegel-analisis-vec.pdf"},{subjectClave:"307",title:"Introduction to Algorithms",author:"Cormen, Leiserson, Rivest, Stein",link:"clrs-4ed.pdf"},{subjectClave:"307",title:"Algoritmos y Estructuras de Datos",author:"Niklaus Wirth",link:"wirth-algorithms.pdf"},{subjectClave:"308",title:"Probabilidad y Estadistica para Ingenieria",author:"Walpole, Myers, Myers",link:"walpole-probabilidad.pdf"},{subjectClave:"305",title:"Algebra Lineal",author:"Stanley I. Grossman",link:"grossman-algebra.pdf"},{subjectClave:"305",title:"Linear Algebra Done Right",author:"Sheldon Axler",link:"axler-linear.pdf"}];
+function makeDate(d){var dt=new Date();dt.setDate(dt.getDate()+d);return dt;}
+function fmtDate(d){return d.toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"});}
+function daysUntil(d){var n=new Date();n.setHours(0,0,0,0);var t=new Date(d);t.setHours(0,0,0,0);return Math.round((t-n)/86400000);}
+var tasks=[{id:1,subjectClave:"306",title:"Serie de ejercicios 4: Integrales triples",desc:"Resolver ejercicios del capitulo 15, secciones 15.6-15.8 del Stewart.",due:makeDate(2),completed:false},{id:2,subjectClave:"307",title:"Implementacion de Arbol AVL",desc:"Programar insercion, eliminacion y balanceo en un arbol AVL en C++.",due:makeDate(1),completed:false},{id:3,subjectClave:"308",title:"Tarea 5: Distribuciones continuas",desc:"Resolver problemas de distribucion normal, exponencial y gamma.",due:makeDate(1),completed:false},{id:4,subjectClave:"305",title:"Demostracion: Espacios vectoriales",desc:"Demostrar 5 propiedades de subespacios vectoriales con ejemplos numericos.",due:makeDate(4),completed:false},{id:5,subjectClave:"306",title:"Proyecto parcial: Teorema de Stokes",desc:"Aplicar el teorema de Stokes a un campo vectorial dado. Incluir graficas.",due:makeDate(6),completed:false},{id:6,subjectClave:"307",title:"Practica 3: Grafos y algoritmo de Dijkstra",desc:"Implementar busqueda del camino mas corto en un grafo dirigido.",due:makeDate(3),completed:false},{id:7,subjectClave:"308",title:"Examen parcial 2",desc:"Estudio para el segundo parcial: probabilidad condicional, Bayes, variables aleatorias.",due:makeDate(8),completed:false},{id:8,subjectClave:"305",title:"Ejercicios: Transformaciones lineales",desc:"Ejercicios 4.1-4.3 del Grossman. Representacion matricial de transformaciones.",due:makeDate(5),completed:false},{id:9,subjectClave:"306",title:"Serie de ejercicios 3: Integrales dobles",desc:"Coordenadas polares y aplicaciones de integracion doble.",due:makeDate(-3),completed:true},{id:10,subjectClave:"307",title:"Practica 2: Listas enlazadas",desc:"Listas simplemente y doblemente enlazadas con operaciones CRUD.",due:makeDate(-5),completed:true},{id:11,subjectClave:"308",title:"Tarea 4: Probabilidad condicional",desc:"Teorema de Bayes y aplicaciones.",due:makeDate(-7),completed:true}];
+var nextTaskId=12,isAdmin=false;
+function getSubject(c){return subjects.find(function(s){return s.clave===c;});}
+function getTaskUrgency(t){if(t.completed)return"completed";var d=daysUntil(t.due);if(d<0)return"urgent";if(d<=2)return"urgent";if(d<=4)return"warning";return"normal";}
+function getUrgencyLabel(d){if(d<0)return"Vencida";if(d===0)return"Hoy";if(d===1)return"Manana";return d+" dias";}
+var dayIdx={Lun:1,Mar:2,Mie:3,Jue:4,Vie:5};
+var hours=[8,9,10,11,12,13,14,15,16,17];
+function renderSchedule(){var c=document.getElementById("timetable");var h="";hours.forEach(function(hr){h+="<div class=\"time-cell\">"+String(hr).padStart(2,"0")+":00</div>";});["Lun","Mar","Mie","Jue","Vie"].forEach(function(day){h+="<div class=\"day-col\"><div class=\"day-header\">"+day+"</div>";hours.forEach(function(){h+="<div class=\"hour-line\"></div>";});h+="</div>";});c.innerHTML=h;var cols=c.querySelectorAll(".day-col");var hh=52;subjects.forEach(function(subj){subj.horario.forEach(function(slot){var ci=dayIdx[slot.dia]-1;var col=cols[ci];var top=(slot.inicio-8)*hh+36;var height=(slot.fin-slot.inicio)*hh;var block=document.createElement("div");block.className="subject-block";block.style.cssText="top:"+top+"px;height:"+height+"px;background:"+subj.color+";";block.innerHTML="<span class=\"block-name\">"+subj.nombre+"</span><span class=\"block-room\">"+slot.aula+"</span>";block.onclick=function(){showSubjectDetail(subj.clave);};col.appendChild(block);});});}
+function renderTasks(filter){var cnt=document.getElementById("tasksList");var f=tasks.slice();if(filter==="pending")f=f.filter(function(t){return !t.completed;});if(filter==="completed")f=f.filter(function(t){return t.completed;});f.sort(function(a,b){if(a.completed!==b.completed)return a.completed?1:-1;return new Date(a.due)-new Date(b.due);});if(!f.length){cnt.innerHTML="<p style=\"text-align:center;color:var(--muted);padding:32px;font-size:13px;\">No hay tareas que mostrar.</p>";return;}cnt.innerHTML=f.map(function(t){var subj=getSubject(t.subjectClave);var days=daysUntil(t.due);var urg=getTaskUrgency(t);var ul=getUrgencyLabel(days);return"<div class=\"task-card"+(t.completed?" completed":"")+"\" id=\"task-"+t.id+"\"><div class=\"task-color-bar\" style=\"background:"+subj.color+"\"></div><div class=\"task-top\"><div style=\"flex:1;min-width:0;\"><div class=\"task-subject\">"+subj.clave+" "+String.fromCharCode(183)+" "+subj.nombre+"</div><div class=\"task-title\">"+t.title+"</div><div class=\"task-desc\">"+t.desc+"</div></div><div class=\"task-check\" onclick=\"event.stopPropagation();toggleTask("+t.id+")\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"M20 6L9 17l-5-5\"/></svg></div></div><div class=\"task-meta\"><span class=\"task-due "+urg+"\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:14px;height:14px;\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"+(t.completed?"Entregada":ul+" "+String.fromCharCode(183)+" "+fmtDate(t.due))+"</span>"+(t.completed?"":"<span class=\"pill\" style=\"background:"+(days<0?"color-mix(in oklch, var(--danger) 8%, transparent)":"var(--accent-soft)")+";color:"+(days<0?"var(--danger)":"var(--accent)")+";\">"+(days<0?"Vencida":"Urgente")+"</span>")+"</div></div>";}).join("");}
+function filterTasks(filter,el){document.querySelectorAll("#taskFilterTabs .filter-tab").forEach(function(t){t.classList.remove("active");});el.classList.add("active");renderTasks(filter);}
+function toggleTask(id){var t=tasks.find(function(t){return t.id===id;});if(!t)return;t.completed=!t.completed;var card=document.getElementById("task-"+id);if(card){card.classList.add("completing");if(t.completed)card.classList.add("completed");else card.classList.remove("completed");setTimeout(function(){card.classList.remove("completing");},300);}updateStats();renderTasks(document.querySelector("#taskFilterTabs .filter-tab.active").dataset.filter);renderAllTasks();renderAdminTasks();}
+function updateStats(){var p=tasks.filter(function(t){return !t.completed;}).length;var c=tasks.filter(function(t){return t.completed;}).length;var pct=tasks.length?Math.round(c/tasks.length*100):0;document.getElementById("pending-count").textContent=p;document.getElementById("completed-count").textContent=c;document.getElementById("progress-pct").textContent=pct+"%";document.getElementById("pending-badge").textContent=p;var pf=document.querySelector(".progress-fill");if(pf)pf.style.width=pct+"%";}
+function renderAllTasks(){var cnt=document.getElementById("allTasksList");var s=tasks.slice().sort(function(a,b){if(a.completed!==b.completed)return a.completed?1:-1;return new Date(a.due)-new Date(b.due);});cnt.innerHTML=s.map(function(t){var subj=getSubject(t.subjectClave);var days=daysUntil(t.due);var urg=getTaskUrgency(t);var ul=getUrgencyLabel(days);return"<div class=\"task-card"+(t.completed?" completed":"")+"\" id=\"all-task-"+t.id+"\"><div class=\"task-color-bar\" style=\"background:"+subj.color+"\"></div><div class=\"task-top\"><div style=\"flex:1;min-width:0;\"><div class=\"task-subject\">"+subj.clave+" "+String.fromCharCode(183)+" "+subj.nombre+"</div><div class=\"task-title\">"+t.title+"</div><div class=\"task-desc\">"+t.desc+"</div></div><div class=\"task-check\" onclick=\"event.stopPropagation();toggleTask("+t.id+")\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"M20 6L9 17l-5-5\"/></svg></div></div><div class=\"task-meta\"><span class=\"task-due "+urg+"\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:14px;height:14px;\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"+(t.completed?"Entregada":ul+" "+String.fromCharCode(183)+" "+fmtDate(t.due))+"</span></div></div>";}).join("");document.getElementById("tasksSubjectFilter").innerHTML="<button class=\"btn btn-secondary\" style=\"font-size:12px;padding:5px 12px;\" onclick=\"renderAllTasks()\">Todas</button>"+subjects.map(function(s){return"<button class=\"btn btn-ghost\" style=\"font-size:12px;padding:5px 12px;\" onclick=\"renderAllTasksBySubject(\""+s.clave+"\")\">"+s.clave+"</button>";}).join("");}
+function renderAllTasksBySubject(clave){var cnt=document.getElementById("allTasksList");var s=tasks.filter(function(t){return t.subjectClave===clave;}).sort(function(a,b){if(a.completed!==b.completed)return a.completed?1:-1;return new Date(a.due)-new Date(b.due);});var subj=getSubject(clave);cnt.innerHTML=s.map(function(t){var days=daysUntil(t.due);var urg=getTaskUrgency(t);var ul=getUrgencyLabel(days);return"<div class=\"task-card"+(t.completed?" completed":"")+"\" id=\"all-task-"+t.id+"\"><div class=\"task-color-bar\" style=\"background:"+subj.color+"\"></div><div class=\"task-top\"><div style=\"flex:1;min-width:0;\"><div class=\"task-subject\">"+subj.clave+" "+String.fromCharCode(183)+" "+subj.nombre+"</div><div class=\"task-title\">"+t.title+"</div><div class=\"task-desc\">"+t.desc+"</div></div><div class=\"task-check\" onclick=\"event.stopPropagation();toggleTask("+t.id+")\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"M20 6L9 17l-5-5\"/></svg></div></div><div class=\"task-meta\"><span class=\"task-due "+urg+"\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:14px;height:14px;\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"+(t.completed?"Entregada":ul+" "+String.fromCharCode(183)+" "+fmtDate(t.due))+"</span></div></div>";}).join("");}
+function renderSubjectsGrid(){document.getElementById("subjectsGrid").innerHTML=subjects.map(function(s){return"<div class=\"card\" style=\"cursor:pointer;border-left:4px solid "+s.color+";\" onclick=\"showSubjectDetail(\""+s.clave+"\")\"><div class=\"task-subject\" style=\"margin-bottom:6px;\">"+s.clave+" "+String.fromCharCode(183)+" Grupo "+s.grupo+"</div><h3 style=\"font-size:17px;margin-bottom:4px;\">"+s.nombre+"</h3><p style=\"color:var(--muted);font-size:13px;margin-bottom:8px;\">"+s.profesores+"</p><div style=\"display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;\">"+s.horario.map(function(h){return"<span class=\"tag\" style=\"font-size:10px;\">"+h.dia+" "+h.inicio+":00-"+h.fin+":00</span>";}).join("")+"</div></div>";}).join("");}
+function showSubjectDetail(clave){var subj=getSubject(clave);var st=tasks.filter(function(t){return t.subjectClave===clave;});var sr=resources.filter(function(r){return r.subjectClave===clave;});var detail=document.getElementById("view-subject-detail");var grid=document.getElementById("subjectsGrid");grid.style.display="none";detail.style.display="block";detail.classList.add("active");var sched=subj.horario.map(function(h){return h.dia+" "+h.inicio+":00-"+h.fin+":00";}).join(", ");var tasksHtml="";if(st.length===0){tasksHtml="<p style=\"color:var(--muted);font-size:13px;padding:16px 20px;\">No hay tareas asignadas.</p>";}else{tasksHtml=st.sort(function(a,b){return new Date(a.due)-new Date(b.due);}).map(function(t){var days=daysUntil(t.due);var urg=getTaskUrgency(t);var ul=getUrgencyLabel(days);return"<div class=\"task-card"+(t.completed?" completed":"")+"\" style=\"margin:0;border-radius:0;border-left:0;border-right:0;border-top:0;\" id=\"subj-task-"+t.id+"\"><div class=\"task-color-bar\" style=\"background:"+subj.color+"\"></div><div class=\"task-top\"><div style=\"flex:1;\"><div class=\"task-title\">"+t.title+"</div><div class=\"task-desc\">"+t.desc+"</div></div><div class=\"task-check\" onclick=\"event.stopPropagation();toggleTask("+t.id+")\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\"><path d=\"M20 6L9 17l-5-5\"/></svg></div></div><div class=\"task-meta\"><span class=\"task-due "+urg+"\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:14px;height:14px;\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"+(t.completed?"Entregada":ul+" "+String.fromCharCode(183)+" "+fmtDate(t.due))+"</span></div></div>";}).join("");}var resourcesHtml="";if(sr.length===0){resourcesHtml="<p style=\"color:var(--muted);font-size:13px;\">No hay recursos asignados.</p>";}else{resourcesHtml=sr.map(function(r){return"<div class=\"resource-item\"><div class=\"resource-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M4 19.5A2.5 2.5 0 016.5 17H20\"/><path d=\"M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z\"/><line x1=\"8\" y1=\"7\" x2=\"16\" y2=\"7\"/><line x1=\"8\" y1=\"11\" x2=\"14\" y2=\"11\"/></svg></div><div class=\"resource-info\"><div class=\"res-title\">"+r.title+"</div><div class=\"res-author\">"+r.author+"</div></div><button class=\"btn btn-secondary\" onclick=\"alert(\"Descargando: "+r.link+"\")\">Descargar</button></div>";}).join("");}detail.innerHTML="<div class=\"subject-header-card\" data-od-id=\"subject-detail\"><div class=\"back-btn\" onclick=\"hideSubjectDetail()\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M19 12H5M12 19l-7-7 7-7\"/></svg>Volver a materias</div><div style=\"display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;\"><div style=\"width:48px;height:48px;border-radius:8px;background:"+subj.color+";display:grid;place-items:center;color:var(--surface);font-family:var(--font-mono);font-size:16px;font-weight:700;flex-shrink:0;\">"+subj.clave+"</div><div style=\"flex:1;min-width:0;\"><h2>"+subj.nombre+"</h2><p class=\"professor\">"+subj.profesores+"</p><div class=\"subject-meta-row\"><span class=\"subject-meta-item\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:16px;height:16px;\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>"+sched+"</span>"+(subj.horario[0]?"<span class=\"subject-meta-item\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:16px;height:16px;\"><path d=\"M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z\"/></svg>"+subj.horario[0].aula+"</span>":"")+"<span class=\"subject-meta-item\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" style=\"width:16px;height:16px;\"><path d=\"M9 11l3 3L22 4\"/><path d=\"M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11\"/></svg>"+st.filter(function(t){return !t.completed;}).length+" pendientes "+String.fromCharCode(183)+" "+st.filter(function(t){return t.completed;}).length+" entregadas</span></div></div></div></div><div class=\"detail-grid\"><div class=\"detail-section\"><div class=\"section-head\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M9 11l3 3L22 4\"/><path d=\"M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11\"/></svg>Tareas de esta materia</div><div class=\"section-body\" style=\"padding:0;\">"+tasksHtml+"</div></div><div class=\"detail-section\"><div class=\"section-head\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\"><path d=\"M4 19.5A2.5 2.5 0 016.5 17H20\"/><path d=\"M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z\"/></svg>Recursos bibliograficos</div><div class=\"section-body\">"+resourcesHtml+"</div></div></div>";}
+function hideSubjectDetail(){document.getElementById("view-subject-detail").style.display="none";document.getElementById("view-subject-detail").classList.remove("active");document.getElementById("subjectsGrid").style.display="";}
+function renderAdminTasks(){var cnt=document.getElementById("adminTasksList");if(!cnt)return;cnt.innerHTML="<table class=\"ds-table\" style=\"width:100%;\"><thead><tr><th>Tarea</th><th>Materia</th><th>Entrega</th><th>Estado</th><th>Accion</th></tr></thead><tbody>"+tasks.map(function(t){var subj=getSubject(t.subjectClave);return"<tr><td style=\"max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;\" title=\""+t.title+"\">"+t.title+"</td><td>"+subj.clave+"</td><td>"+fmtDate(t.due)+"</td><td>"+(t.completed?"<span style=\"color:var(--info);font-weight:500;\">Entregada</span>":"<span style=\"color:var(--accent);font-weight:500;\">Pendiente</span>")+"</td><td><button class=\"btn btn-danger\" style=\"font-size:11px;padding:4px 10px;\" onclick=\"deleteTask("+t.id+")\">Eliminar</button></td></tr>";}).join("")+"</tbody></table>";}
+function createTask(){var subj=document.getElementById("adminTaskSubject").value;var title=document.getElementById("adminTaskTitle").value.trim();var desc=document.getElementById("adminTaskDesc").value.trim();var due=document.getElementById("adminTaskDue").value;if(!title||!due){alert("Completa titulo y fecha de entrega.");return;}tasks.push({id:nextTaskId++,subjectClave:subj,title:title,desc:desc||"Sin descripcion.",due:new Date(due+"T23:59:59"),completed:false});document.getElementById("adminTaskTitle").value="";document.getElementById("adminTaskDesc").value="";document.getElementById("adminTaskDue").value="";updateStats();renderTasks("all");renderAllTasks();renderAdminTasks();}
+function deleteTask(id){if(!confirm("Eliminar esta tarea?"))return;tasks=tasks.filter(function(t){return t.id!==id;});updateStats();renderTasks(document.querySelector("#taskFilterTabs .filter-tab.active").dataset.filter);renderAllTasks();renderAdminTasks();}
+function addResource(){var subj=document.getElementById("adminResSubject").value;var title=document.getElementById("adminResTitle").value.trim();var author=document.getElementById("adminResAuthor").value.trim();var link=document.getElementById("adminResLink").value.trim();if(!title||!author){alert("Completa titulo y autor.");return;}resources.push({subjectClave:subj,title:title,author:author,link:link||"sin-enlace.pdf"});document.getElementById("adminResTitle").value="";document.getElementById("adminResAuthor").value="";document.getElementById("adminResLink").value="";alert("Recurso agregado correctamente.");}
+function switchView(view){if(view==="admin"&&!isAdmin){document.getElementById("authOverlay").style.display="flex";return;}document.querySelectorAll(".nav-item").forEach(function(n){n.classList.remove("active");});var navItem=document.querySelector(".nav-item[data-view=\""+view+"\"]");if(navItem)navItem.classList.add("active");document.querySelectorAll(".view").forEach(function(v){v.classList.remove("active");if(v.parentElement===document.getElementById("contentScroll"))v.style.display="none";});var el=document.getElementById("view-"+view);if(el){el.classList.add("active");el.style.display="block";}var titles={dashboard:"Inicio",tasks:"Tareas",subjects:"Materias y recursos",admin:"Panel de administracion"};document.getElementById("pageTitle").textContent=titles[view]||"UniHub";if(view==="subjects"){renderSubjectsGrid();hideSubjectDetail();}if(view==="tasks")renderAllTasks();if(view==="admin")renderAdminTasks();var sidebar=document.getElementById("sidebar");if(sidebar.classList.contains("open"))sidebar.classList.remove("open");document.getElementById("contentScroll").scrollTo({top:0,behavior:"smooth"});}
+function adminLogin(){var email=document.getElementById("authEmail").value.trim();var pass=document.getElementById("authPassword").value;if(email&&pass){isAdmin=true;document.getElementById("authOverlay").style.display="none";switchView("admin");}else{alert("Ingresa credenciales validas.");}}
+function closeAuth(){document.getElementById("authOverlay").style.display="none";switchView("dashboard");}
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");}
+function handleSearch(){var q=document.getElementById("searchInput").value.toLowerCase().trim();if(!q){switchView("dashboard");return;}switchView("tasks");setTimeout(function(){var cards=document.querySelectorAll("#allTasksList .task-card");cards.forEach(function(c){var txt=c.textContent.toLowerCase();c.style.display=txt.indexOf(q)>=0?"":"none";});},100);}
+renderSchedule();
+renderTasks("all");
+updateStats();
+</script>
+</body>
+</html>
