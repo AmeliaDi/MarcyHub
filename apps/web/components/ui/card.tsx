@@ -1,15 +1,23 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, HTMLMotionProps } from 'framer-motion';
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardProps extends Omit<HTMLMotionProps<'div'>, 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'> {
   children: React.ReactNode;
   hover?: boolean;
+  glass?: 'none' | 'card' | 'strong' | 'panel';
 }
 
-export function Card({ children, className, hover = false, ...props }: CardProps) {
-  const baseStyles = 'bg-card text-card-foreground rounded-2xl border border-border shadow-md overflow-hidden';
+export function Card({ children, className, hover = false, glass = 'card', ...props }: CardProps) {
+  const glassStyles = {
+    none: '',
+    card: 'glass-card',
+    strong: 'glass-strong',
+    panel: 'glass-panel'
+  };
+  
+  const baseStyles = `text-card-foreground rounded-2xl border border-border/50 shadow-md overflow-hidden ${glassStyles[glass]}`;
   const hoverStyles = hover 
     ? 'transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 hover:border-primary/30' 
     : '';
@@ -28,7 +36,7 @@ export function Card({ children, className, hover = false, ...props }: CardProps
   }
   
   return (
-    <div className={cn(baseStyles, hoverStyles, className)} {...props}>
+    <div className={cn(baseStyles, hoverStyles, className)}>
       {children}
     </div>
   );
@@ -36,7 +44,7 @@ export function Card({ children, className, hover = false, ...props }: CardProps
 
 export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('px-6 py-5 border-b border-border/50', className)}>
+    <div className={cn('px-6 py-5 border-b border-border/30', className)}>
       {children}
     </div>
   );
@@ -68,7 +76,7 @@ export function CardContent({ children, className }: { children: React.ReactNode
 
 export function CardFooter({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('px-6 py-4 border-t border-border/50 bg-muted/30', className)}>
+    <div className={cn('px-6 py-4 border-t border-border/30 bg-muted/20', className)}>
       {children}
     </div>
   );
