@@ -41,19 +41,34 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }: SidebarPro
         )}
       </AnimatePresence>
       
-      {/* Sidebar */}
+      {/* Sidebar with glassmorphism */}
       <motion.aside 
         initial={false}
         animate={{ x: isOpen || window.innerWidth >= 1024 ? 0 : '-100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className={cn(
-          'fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-primary to-primary/95 text-primary-foreground z-50 lg:static lg:h-auto flex flex-col shadow-2xl lg:shadow-none overflow-hidden'
+          'fixed top-0 left-0 h-full w-64 z-50 lg:static lg:h-auto flex flex-col overflow-hidden',
+          'glass-strong border-r border-white/20 dark:border-white/10'
         )}
       >
-        {/* Decorative background pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 right-0 w-48 h-48 bg-accent rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary/20 via-transparent to-transparent rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+            className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-accent/15 via-transparent to-transparent rounded-full blur-3xl"
+          />
         </div>
         
         {/* Brand */}
@@ -65,15 +80,15 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }: SidebarPro
             transition={{ delay: 0.1 }}
           >
             <motion.div 
-              className="w-10 h-10 bg-gradient-to-br from-accent to-accent/80 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
+              className="w-10 h-10 bg-gradient-to-br from-accent to-accent/80 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg glass-card"
               whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
               <span className="text-lg font-bold text-white">M</span>
             </motion.div>
             <div>
-              <h1 className="font-display text-xl font-semibold tracking-tight">MarcyHub</h1>
-              <p className="text-xs text-white/60">Plataforma Estudiantil</p>
+              <h1 className="font-display text-xl font-semibold tracking-tight gradient-text-shimmer">MarcyHub</h1>
+              <p className="text-xs text-muted-foreground/70">Plataforma Estudiantil</p>
             </div>
           </motion.div>
           
@@ -81,7 +96,7 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }: SidebarPro
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="absolute top-4 right-4 lg:hidden text-white/70 hover:text-white"
+            className="absolute top-4 right-4 lg:hidden text-white/70 hover:text-white glass-panel rounded-lg p-1"
             onClick={onClose}
           >
             <X className="h-5 w-5" />
@@ -103,28 +118,31 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }: SidebarPro
               className={cn(
                 'w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 text-left group relative overflow-hidden',
                 currentPage === item.id
-                  ? 'bg-white/15 text-white shadow-inner'
+                  ? 'glass-card text-white shadow-md'
                   : 'text-white/70 hover:bg-white/10 hover:text-white'
               )}
               whileHover={{ x: 4 }}
               whileTap={{ scale: 0.98 }}
             >
-              {/* Active indicator */}
+              {/* Active indicator with glow */}
               {currentPage === item.id && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute left-0 top-0 bottom-0 w-1 bg-accent rounded-r-full"
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
+                <>
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-accent to-accent/60 rounded-r-full"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent/10 to-transparent" />
+                </>
               )}
               
               <motion.span 
-                className="text-lg"
+                className="text-lg relative z-10"
                 whileHover={{ scale: 1.2, rotate: 5 }}
               >
                 {item.icon}
               </motion.span>
-              {item.label}
+              <span className="relative z-10">{item.label}</span>
             </motion.button>
           ))}
         </nav>
@@ -136,8 +154,10 @@ export function Sidebar({ isOpen, onClose, currentPage, onNavigate }: SidebarPro
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="text-xs text-white/50 text-center">
-            v2.0 · Next.js + TypeScript
+          <div className="glass-panel rounded-lg px-3 py-2 text-center">
+            <p className="text-xs text-muted-foreground/60">
+              v2.0 · Next.js + TypeScript
+            </p>
           </div>
         </motion.div>
       </motion.aside>
