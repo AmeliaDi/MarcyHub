@@ -8,8 +8,6 @@ Plataforma estudiantil en una sola página (`index.html`) para visualizar horari
 - Alta de administradores desde el propio panel admin.
 - Persistencia remota en Turso para tareas, recursos y admins.
 
-4`
-
 > Puedes agregar más administradores desde la sección **Agregar administrador** dentro del panel admin.
 
 ## Estructura del proyecto
