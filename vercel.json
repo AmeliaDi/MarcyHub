@@ -1,6 +1,9 @@
 {
   "version": 2,
   "cleanUrls": true,
+  "framework": "nextjs",
+  "buildCommand": "next build ./apps/web",
+  "outputDirectory": ".next",
   "rewrites": [
     {
       "source": "/",
