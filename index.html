@@ -690,6 +690,7 @@ var currentView = "dashboard", prevView = "dashboard", isSwitching = false, sear
 var taskFileData = null, resFileData = null;
 var admins = loadAdmins();
 var syncStateTimer = null;
+var hasHydratedFromServer = false;
 
 var dayIdx = {Lun:1,Mar:2,Mie:3,Jue:4,Vie:5};
 var hours = [8,9,10,11,12,13,14,15,16,17];
@@ -1257,12 +1258,14 @@ function saveResources() {
 }
 function serializeTasksForApi() {
   return tasks.map(function(t) {
+    var dueDate = t.due instanceof Date ? t.due : new Date(t.due);
+    if (isNaN(dueDate.getTime())) dueDate = new Date();
     return {
       id: Number(t.id) || 0,
       subjectClave: t.subjectClave,
       title: t.title,
       desc: t.desc,
-      due: t.due instanceof Date ? t.due.toISOString() : new Date(t.due).toISOString(),
+      due: dueDate.toISOString(),
       completed: !!t.completed,
       fileData: t.fileData || null
     };
@@ -1284,7 +1287,10 @@ function serializeResourcesForApi() {
     };
   }).filter(function(r) { return r.id > 0; });
 }
-function syncStateNow() {
+function syncStateNow(options) {
+  if (!hasHydratedFromServer && !(options && options.force)) {
+    return Promise.resolve();
+  }
   return fetch(API_STATE_URL, {
     method: "POST",
     headers: {"Content-Type":"application/json"},
@@ -1362,12 +1368,15 @@ function syncStateFromServer() {
       return res.json();
     })
     .then(function(data) {
+      hasHydratedFromServer = true;
       replaceStateFromServer(data);
       autoCompleteTasksByClassTime({ silent: true });
       refreshAllViews();
       updateStats();
     })
-    .catch(function() {});
+    .catch(function() {
+      hasHydratedFromServer = true;
+    });
 }
 function loadResources() {
   var fallback = defaultResources();

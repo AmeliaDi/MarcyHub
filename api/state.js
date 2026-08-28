@@ -1,6 +1,12 @@
 import { defaultAdmins, defaultResources, defaultTasks } from "./_lib/defaults.js";
 import { ensureSchema, getStateValue, setStateValue } from "./_lib/turso.js";
 
+function safeIsoDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return new Date().toISOString();
+  return date.toISOString();
+}
+
 function normalizeAdmins(admins) {
   if (!Array.isArray(admins)) return defaultAdmins();
   const clean = admins
@@ -22,7 +28,7 @@ function normalizeTasks(tasks) {
       subjectClave: t.subjectClave,
       title: t.title,
       desc: typeof t.desc === "string" ? t.desc : "Sin descripción.",
-      due: t.due ? new Date(t.due).toISOString() : new Date().toISOString(),
+      due: t.due ? safeIsoDate(t.due) : new Date().toISOString(),
       completed: !!t.completed,
       fileData: t.fileData || null
     }))
