@@ -66,9 +66,13 @@ ul { list-style: none; margin: 0; padding: 0; }
 .sidebar-backdrop { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 45%, transparent); opacity: 0; pointer-events: none; transition: opacity 0.24s ease; z-index: 19; }
 .sidebar-backdrop.show { opacity: 1; pointer-events: auto; }
 .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-.topbar { height: var(--topbar-h); background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gap-lg); flex-shrink: 0; z-index: 10; position: relative; }
+.topbar { height: var(--topbar-h); background: color-mix(in oklch, var(--surface) 88%, transparent); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--gap-lg); flex-shrink: 0; z-index: 10; position: sticky; top: 0; backdrop-filter: blur(8px); }
 .topbar::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent 60%); opacity: 0.5; }
 .content-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: var(--gap-lg); scroll-behavior: smooth; background-image: radial-gradient(circle, color-mix(in oklch, var(--primary) 5%, transparent) 1px, transparent 1px); background-size: 24px 24px; }
+.stats-grid, .cards-grid, .subjects-grid, .admin-grid { gap: var(--gap-md); }
+.card, .stat-card, .task-item, .resource-card, .subject-card, .admin-card { border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition); }
+.card:hover, .stat-card:hover, .task-item:hover, .resource-card:hover, .subject-card:hover, .admin-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: color-mix(in oklch, var(--primary) 18%, var(--border)); }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--gap-sm); margin-bottom: var(--gap-md); }
 .sidebar-brand { padding: 18px var(--gap-lg); font-family: var(--font-display); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; border-bottom: 1px solid color-mix(in oklch, var(--surface) 10%, transparent); display: flex; align-items: center; gap: 10px; position: relative; }
 .sidebar-brand::after { content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent 80%); opacity: 0.6; }
 .sidebar-brand .brand-icon { width: 32px; height: 32px; background: var(--accent); border-radius: var(--radius); display: grid; place-items: center; flex-shrink: 0; }
@@ -413,7 +417,7 @@ ul { list-style: none; margin: 0; padding: 0; }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
       <input type="search" placeholder="Buscar materia o tarea…" id="searchInput" oninput="handleSearch()" aria-label="Buscar materia o tarea" autocomplete="off" />
     </div>
-    <div class="topbar-right"><button class="user-avatar" title="Estudiante" aria-label="Perfil de usuario">AE</button></div>
+    <div class="topbar-right"></div>
   </header>
 
   <div class="content-scroll" id="contentScroll">
@@ -555,6 +559,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 
 <div class="toast-container" id="toastContainer"></div>
 
+<script src="./app/modules.js"></script>
 <script>
 (function(){
 "use strict";
@@ -578,9 +583,9 @@ function defaultResources() {
   ];
 }
 
-function makeDate(d) { var dt = new Date(); dt.setDate(dt.getDate() + d); return dt; }
-function fmtDate(d) { return d.toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}); }
-function daysUntil(d) { var n = new Date(); n.setHours(0,0,0,0); var t = new Date(d); t.setHours(0,0,0,0); return Math.round((t - n) / 86400000); }
+function makeDate(d) { return window.MarcyModules.dates.makeDate(d); }
+function fmtDate(d) { return window.MarcyModules.dates.fmtDate(d); }
+function daysUntil(d) { return window.MarcyModules.dates.daysUntil(d); }
 function getSubject(c) { return subjects.find(function(s){ return s.clave === c; }); }
 function getClassDeadlineForTask(t) {
   var dueDate = new Date(t.due);
@@ -857,10 +862,13 @@ function refreshAllViews() {
   }
 }
 
+function getSemesterRange(now) { return window.MarcyModules.semester.getRange(now); }
+function getSemesterProgressPct() { return window.MarcyModules.semester.getProgressPct(new Date()); }
+
 function updateStats() {
   var p = tasks.filter(function(t){ return !t.completed; }).length;
   var c = tasks.filter(function(t){ return t.completed; }).length;
-  var pct = tasks.length ? Math.round(c / tasks.length * 100) : 0;
+  var pct = getSemesterProgressPct();
   var pc = document.getElementById("pending-count");
   var cc = document.getElementById("completed-count");
   var pp = document.getElementById("progress-pct");
