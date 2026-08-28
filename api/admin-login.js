@@ -1,9 +1,6 @@
 import { defaultAdmins } from "./_lib/defaults.js";
 import { ensureSchema, getStateValue, setStateValue } from "./_lib/turso.js";
-
-function normalizeEmail(email) {
-  return String(email || "").trim().toLowerCase();
-}
+import { normalizeAdmins, normalizeEmail } from "./_lib/state-normalizers.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -21,11 +18,12 @@ export default async function handler(req, res) {
     return;
   }
 
-  const adminsRaw = await getStateValue("admins", defaultAdmins());
-  const admins = Array.isArray(adminsRaw) ? adminsRaw : defaultAdmins();
+  const fallbackAdmins = defaultAdmins();
+  const adminsRaw = await getStateValue("admins", fallbackAdmins);
+  const admins = normalizeAdmins(adminsRaw, fallbackAdmins);
 
   if (!Array.isArray(adminsRaw)) {
-    await setStateValue("admins", defaultAdmins());
+    await setStateValue("admins", admins);
   }
 
   const found = admins.find((a) => normalizeEmail(a.email) === email && String(a.password || "") === password);
@@ -34,5 +32,11 @@ export default async function handler(req, res) {
     return;
   }
 
-  res.status(200).json({ ok: true });
+  res.status(200).json({
+    ok: true,
+    admin: {
+      email: found.email,
+      name: found.name || found.email
+    }
+  });
 }

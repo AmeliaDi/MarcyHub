@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="227519aa-c07f-4a23-b538-7f756905a559" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/calendario_semestral2027.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/_lib/defaults.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/_lib/defaults.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/state.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/state.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/modules.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/modules.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -126,6 +128,7 @@
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "C:/Users/MarcyWu/AppData/Roaming/JetBrains/WebStorm2026.2/node/versions/24.20.0/node",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "ml.llm.LLMThirdPartyAiProvidersConfigurable",
     "to.speed.mode.migration.done": "true"
@@ -151,7 +154,7 @@
       <option name="presentableId" value="Default" />
       <updated>1787631751018</updated>
       <workItem from="1787631752129" duration="2028000" />
-      <workItem from="1787935909937" duration="1044000" />
+      <workItem from="1787935909937" duration="2190000" />
     </task>
     <servers />
   </component>

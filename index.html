@@ -132,6 +132,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 .schedule-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap; }
 .schedule-header h3 { font-size: var(--fs-h3); font-weight: 600; }
 .week-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.week-label .week-sub { display: block; margin-top: 4px; letter-spacing: 0.02em; text-transform: none; font-size: 10px; }
 .schedule-body { padding: 12px 8px 12px 0; overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 .schedule-body::-webkit-scrollbar { height: 6px; }
 .schedule-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
@@ -158,13 +159,16 @@ ul { list-style: none; margin: 0; padding: 0; }
 .agenda-selector button:hover:not(.active) { background: var(--fg-soft); }
 .agenda-day { display: none; padding: 0 20px 16px; }
 .agenda-day.active { display: block; animation: fadeSlideIn 0.2s var(--ease-out); }
-.agenda-slot { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.agenda-slot { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: flex-start; width: 100%; background: transparent; border-left: 0; border-right: 0; border-top: 0; text-align: left; }
 .agenda-slot:last-child { border-bottom: 0; }
+.agenda-slot:hover { background: color-mix(in oklch, var(--primary) 4%, transparent); }
+.agenda-slot:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 .agenda-time { font-family: var(--font-mono); font-size: 12px; color: var(--muted); min-width: 64px; padding-top: 2px; }
 .agenda-info { flex: 1; }
 .agenda-name { font-size: 14px; font-weight: 600; }
 .agenda-room { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; margin-top: 2px; }
 .agenda-room svg { width: 12px; height: 12px; flex-shrink: 0; }
+.agenda-hint { font-size: 11px; color: var(--primary); margin-top: 3px; font-weight: 500; }
 .tasks-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; }
 .tasks-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 8px; flex-wrap: wrap; }
 .tasks-header h3 { font-size: var(--fs-h3); font-weight: 600; }
@@ -185,8 +189,14 @@ ul { list-style: none; margin: 0; padding: 0; }
 .task-card .task-subject { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
 .task-card .task-title { font-size: 14px; font-weight: 600; line-height: 1.3; margin-bottom: 6px; }
 .task-card .task-desc { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
+.task-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.task-tag { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 3px 8px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); background: var(--surface); color: var(--muted); }
+.task-tag.status-pending { color: var(--accent-deep); border-color: color-mix(in oklch, var(--accent) 30%, var(--border)); background: color-mix(in oklch, var(--accent) 8%, var(--surface)); }
+.task-tag.status-completed { color: var(--success-ink); border-color: color-mix(in oklch, var(--success) 32%, var(--border)); background: color-mix(in oklch, var(--success) 8%, var(--surface)); }
+.task-tag.holiday-tag { color: color-mix(in oklch, var(--warning) 70%, var(--fg)); border-color: color-mix(in oklch, var(--warning) 35%, var(--border)); background: color-mix(in oklch, var(--warning) 10%, var(--surface)); }
 .task-card .task-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .task-card .task-due { font-family: var(--font-mono); font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+.task-holiday { flex-basis: 100%; font-size: 11px; color: color-mix(in oklch, var(--warning) 70%, var(--fg)); }
 .task-card .task-file { font-size: 11px; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .task-card .task-file svg { width: 12px; height: 12px; flex-shrink: 0; }
 .task-due.overdue { color: var(--danger-ink); }
@@ -197,6 +207,8 @@ ul { list-style: none; margin: 0; padding: 0; }
 .task-card .task-check:hover { border-color: var(--accent-deep); box-shadow: 0 0 0 3px var(--accent-soft); }
 .task-card .task-check:active { transform: scale(0.85); }
 .task-card .task-check:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 2px var(--accent); }
+.task-card .task-check.locked { opacity: 0.6; cursor: not-allowed; }
+.task-card .task-check.locked:hover { border-color: var(--border); box-shadow: none; }
 .task-card.completed .task-check { background: var(--accent-deep); border-color: var(--accent-deep); }
 .task-check svg { width: 13px; height: 13px; color: var(--surface); opacity: 0; transition: opacity var(--transition); }
 .task-card.completed .task-check svg { opacity: 1; }
@@ -261,6 +273,17 @@ ul { list-style: none; margin: 0; padding: 0; }
 .file-upload-zone svg { width: 28px; height: 28px; margin: 0 auto 8px; color: var(--muted); }
 .file-upload-zone p { font-size: 13px; color: var(--muted); }
 .file-upload-zone .file-name { font-size: 12px; font-weight: 500; color: var(--primary); margin-top: 6px; }
+.item-list { margin-top: 10px; display: grid; gap: 8px; }
+.item-chip { border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; background: var(--surface); display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.item-chip .meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.item-chip .name { font-size: 12px; font-weight: 600; }
+.item-chip .actions { display: flex; align-items: center; gap: 6px; }
+.task-files, .task-links { margin-top: 10px; display: grid; gap: 6px; }
+.task-file-item, .task-link-item { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; background: var(--bg); }
+.task-file-item .title, .task-link-item .title { font-size: 12px; font-weight: 600; color: var(--fg); display: block; }
+.task-file-item .meta, .task-link-item .meta { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.task-file-item .actions { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+.task-audit { margin-top: 8px; font-size: 11px; color: var(--muted); }
 .auth-overlay { position: fixed; inset: 0; background: color-mix(in oklch, var(--fg) 60%, transparent); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; animation: overlayIn 0.2s ease; padding: 16px; }
 .auth-card { background: var(--surface); border-radius: var(--radius-xl); padding: 40px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); animation: fadeSlideIn 0.25s var(--ease-out); }
 .auth-card h2 { font-family: var(--font-display); font-size: 24px; margin-bottom: 4px; }
@@ -328,6 +351,16 @@ ul { list-style: none; margin: 0; padding: 0; }
 .modal-body iframe { width: 100%; height: 100%; border: 0; }
 .modal-body .pdf-placeholder { text-align: center; padding: 40px; color: var(--muted); max-width: 420px; }
 .modal-body .pdf-placeholder svg { width: 64px; height: 64px; margin: 0 auto 16px; opacity: 0.3; }
+.slot-modal-content { max-width: 760px; height: auto; max-height: 85vh; }
+.slot-modal-body { display: block; padding: 18px 20px 20px; overflow-y: auto; }
+.slot-modal-head { margin-bottom: 12px; color: var(--muted); font-size: 13px; }
+.slot-modal-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.slot-col { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.slot-col h4 { font-size: 13px; padding: 10px 12px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.slot-task-list { padding: 8px; display: grid; gap: 8px; }
+.slot-task-item { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+.slot-task-item .title { font-size: 13px; font-weight: 600; }
+.slot-task-item .meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
 .subject-chip-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 @media (max-width: 920px) {
   .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); }
@@ -453,7 +486,7 @@ ul { list-style: none; margin: 0; padding: 0; }
         <div class="schedule-card" data-od-id="schedule">
           <div class="schedule-header">
             <h3>Horario semanal</h3>
-            <span class="week-label" id="weekLabel">Semana actual</span>
+            <span class="week-label" id="weekLabel">Semana 0 de 0 · Restan 0</span>
           </div>
           <div class="schedule-body">
             <div class="timetable" id="timetable"></div>
@@ -495,8 +528,10 @@ ul { list-style: none; margin: 0; padding: 0; }
           <input type="hidden" id="editingTaskId" value="" />
           <div class="form-group"><label for="adminTaskSubject">Materia</label><select id="adminTaskSubject"><option value="306">306 · Cálculo Diferencial e Integral III</option><option value="307">307 · Estructura de Datos y Algoritmos</option><option value="308">308 · Probabilidad</option><option value="305">305 · Álgebra Lineal II</option></select></div>
           <div class="form-group"><label for="adminTaskTitle">Título de la tarea</label><input type="text" id="adminTaskTitle" placeholder="Ej: Serie de ejercicios 5" /><span class="auth-error" id="taskTitleError">El título es obligatorio</span></div>
-          <div class="form-group"><label for="adminTaskDesc">Descripción</label><textarea id="adminTaskDesc" placeholder="Instrucciones y detalles…"></textarea></div>
-          <div class="form-row"><div class="form-group"><label for="adminTaskDue">Fecha de entrega</label><input type="date" id="adminTaskDue" /><span class="auth-error" id="taskDueError">Selecciona una fecha válida</span></div><div class="form-group"><label>Archivo adjunto (opcional)</label><div class="file-upload-zone" id="taskFileZone" onclick="document.getElementById('adminTaskFileInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p>Arrastra un archivo o haz clic para seleccionar</p><p class="file-name" id="taskFileName"></p><input type="file" id="adminTaskFileInput" style="display:none;" accept=".pdf,.doc,.docx,.jpg,.png" onchange="handleFileSelect(this,'taskFileName')" /></div></div></div>
+          <div class="form-group"><label for="adminTaskDesc">Descripción detallada</label><textarea id="adminTaskDesc" placeholder="Instrucciones y detalles…"></textarea></div>
+          <div class="form-row"><div class="form-group"><label for="adminTaskResponsible">Responsable</label><input type="text" id="adminTaskResponsible" placeholder="Ej: Equipo A / Nombre del alumno" /><span class="auth-error" id="taskResponsibleError">Indica el responsable</span></div><div class="form-group"><label for="adminTaskDue">Fecha y hora de entrega</label><input type="datetime-local" id="adminTaskDue" /><span class="auth-error" id="taskDueError">Selecciona una fecha y hora válida</span></div></div>
+          <div class="form-group"><label>Archivos PDF adjuntos (opcional)</label><div class="file-upload-zone" id="taskFileZone" onclick="document.getElementById('adminTaskFileInput').click()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><p>Arrastra PDFs o haz clic para seleccionar</p><p class="file-name" id="taskFileName"></p><input type="file" id="adminTaskFileInput" style="display:none;" accept=".pdf,application/pdf" multiple onchange="handleTaskPdfSelect(this)" /></div><div class="item-list" id="taskAttachmentsList"></div></div>
+          <div class="form-group"><label>Links de apoyo (opcional)</label><div class="form-row"><div class="form-group" style="margin-bottom:0;"><input type="text" id="taskLinkLabel" placeholder="Nombre del link (ej. Documento en Drive)" /></div><div class="form-group" style="margin-bottom:0;"><input type="url" id="taskLinkUrl" placeholder="https://..." /></div><button type="button" class="btn btn-secondary" onclick="addTaskDraftLink()">Agregar link</button></div><span class="auth-error" id="taskLinkError">Ingresa un nombre y una URL válida (https://...)</span><div class="item-list" id="taskLinksList"></div></div>
           <div style="display:flex;gap:8px;"><button class="btn btn-primary" onclick="saveTask()" id="saveTaskBtn">Crear tarea</button><button class="btn btn-secondary" onclick="cancelEditTask()" id="cancelEditBtn" style="display:none;">Cancelar edición</button></div>
         </div>
         <div class="form-card" data-od-id="admin-resource-form">
@@ -557,6 +592,16 @@ ul { list-style: none; margin: 0; padding: 0; }
   </div>
 </div>
 
+<div class="modal-overlay" id="slotTasksModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="slotTasksModalTitle" onclick="if(event.target===this)closeSlotTasksModal()">
+  <div class="modal-content slot-modal-content">
+    <div class="modal-header">
+      <h3 id="slotTasksModalTitle">Tareas del horario</h3>
+      <button class="btn btn-ghost" onclick="closeSlotTasksModal()" aria-label="Cerrar tareas del horario">✕</button>
+    </div>
+    <div class="modal-body slot-modal-body" id="slotTasksModalBody"></div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="./app/modules.js"></script>
@@ -585,27 +630,31 @@ function defaultResources() {
 
 function makeDate(d) { return window.MarcyModules.dates.makeDate(d); }
 function fmtDate(d) { return window.MarcyModules.dates.fmtDate(d); }
+function fmtDateTime(d) { return window.MarcyModules.dates.fmtDateTime(d); }
 function daysUntil(d) { return window.MarcyModules.dates.daysUntil(d); }
+function asDate(d) { return window.MarcyModules.dates.asDate(d); }
+function safeIsoDate(d) { return window.MarcyModules.dates.safeIsoDate(d); }
+function safeIsoDateOrEmpty(d) { return window.MarcyModules.dates.safeIsoDateOrEmpty(d); }
+function getHolidayInfo(d) { return window.MarcyModules.holidays.getHolidayInfo(d); }
+function getSemesterWeekInfo(now) { return window.MarcyModules.semester.getWeekInfo(now); }
+function normalizeTaskRecord(task, options) { return window.MarcyModules.tasks.normalizeTask(task, options); }
+function normalizeTaskRecords(taskList, options) { return window.MarcyModules.tasks.normalizeTaskList(taskList, options); }
+function serializeTaskRecords(taskList, options) { return window.MarcyModules.tasks.serializeTaskListForApi(taskList, options); }
+function normalizeEmail(email) { return window.MarcyModules.users.normalizeEmail(email); }
+function inferAdminName(email) { return window.MarcyModules.users.inferDisplayName(email); }
+function resolveAuditActor(meta) { return window.MarcyModules.users.resolveAuditActor(meta); }
+function fileToDataUrl(file) { return window.MarcyModules.files.fileToDataUrl(file); }
+function isPdfFile(file) { return window.MarcyModules.files.isPdfFile(file); }
+function buildTaskAttachmentFromFile(file, dataUrl, actor, nowIso) { return window.MarcyModules.files.buildTaskAttachmentFromFile(file, dataUrl, actor, nowIso); }
+function normalizeTaskAttachment(att, fallbackActor, fallbackDate) { return window.MarcyModules.files.normalizeTaskAttachment(att, fallbackActor, fallbackDate); }
+function normalizeTaskLinks(list, fallbackActor, fallbackDate) { return window.MarcyModules.files.normalizeTaskLinks(list, fallbackActor, fallbackDate); }
+function getTaskDayKey(date) { return window.MarcyModules.calendar.getTaskDayKey(date); }
+function getTasksForSlotRecords(taskList, subjectClave, slotDay) { return window.MarcyModules.calendar.getTasksForSlot(taskList, subjectClave, slotDay); }
 function getSubject(c) { return subjects.find(function(s){ return s.clave === c; }); }
 function getClassDeadlineForTask(t) {
-  var dueDate = new Date(t.due);
-  if (isNaN(dueDate.getTime())) return null;
-  var deadline = new Date(dueDate);
-  var dayNames = ["Dom","Lun","Mar","Mie","Jue","Vie","Sab"];
-  var subject = getSubject(t.subjectClave);
-  var slotDay = dayNames[deadline.getDay()];
-  var classSlots = subject && Array.isArray(subject.horario)
-    ? subject.horario.filter(function(slot) { return slot && slot.dia === slotDay; })
-    : [];
-  if (classSlots.length) {
-    var latestEnd = classSlots.reduce(function(maxEnd, slot) {
-      var endHour = Number(slot.fin) || 0;
-      return endHour > maxEnd ? endHour : maxEnd;
-    }, 0);
-    deadline.setHours(latestEnd, 0, 0, 0);
-  } else {
-    deadline.setHours(23, 59, 59, 999);
-  }
+  if (!t) return null;
+  var deadline = new Date(t.due);
+  if (isNaN(deadline.getTime())) return null;
   return deadline;
 }
 function autoCompleteTasksByClassTime(options) {
@@ -617,6 +666,8 @@ function autoCompleteTasksByClassTime(options) {
     var deadline = getClassDeadlineForTask(t);
     if (deadline && now >= deadline) {
       t.completed = true;
+      t.deliveredAt = now.toISOString();
+      t.deliveredBy = "Sistema (vencimiento)";
       changed++;
     }
   });
@@ -669,17 +720,17 @@ function getResIcon(type) {
 
 function defaultTasks() {
   return [
-  {id:1,subjectClave:"306",title:"Serie de ejercicios 4: Integrales triples",desc:"Resolver ejercicios del capítulo 15, secciones 15.6-15.8 del Stewart.",due:makeDate(2),completed:false},
-  {id:2,subjectClave:"307",title:"Implementación de Árbol AVL",desc:"Programar inserción, eliminación y balanceo en un árbol AVL en C++.",due:makeDate(1),completed:false},
-  {id:3,subjectClave:"308",title:"Tarea 5: Distribuciones continuas",desc:"Resolver problemas de distribución normal, exponencial y gamma.",due:makeDate(1),completed:false},
-  {id:4,subjectClave:"305",title:"Demostración: Espacios vectoriales",desc:"Demostrar 5 propiedades de subespacios vectoriales con ejemplos numéricos.",due:makeDate(4),completed:false},
-  {id:5,subjectClave:"306",title:"Proyecto parcial: Teorema de Stokes",desc:"Aplicar el teorema de Stokes a un campo vectorial dado. Incluir gráficas.",due:makeDate(6),completed:false},
-  {id:6,subjectClave:"307",title:"Práctica 3: Grafos y algoritmo de Dijkstra",desc:"Implementar búsqueda del camino más corto en un grafo dirigido.",due:makeDate(3),completed:false},
-  {id:7,subjectClave:"308",title:"Examen parcial 2",desc:"Estudio para el segundo parcial: probabilidad condicional, Bayes, variables aleatorias.",due:makeDate(8),completed:false},
-  {id:8,subjectClave:"305",title:"Ejercicios: Transformaciones lineales",desc:"Ejercicios 4.1-4.3 del Grossman. Representación matricial de transformaciones.",due:makeDate(5),completed:false},
-  {id:9,subjectClave:"306",title:"Serie de ejercicios 3: Integrales dobles",desc:"Coordenadas polares y aplicaciones de integración doble.",due:makeDate(-3),completed:true},
-  {id:10,subjectClave:"307",title:"Práctica 2: Listas enlazadas",desc:"Listas simplemente y doblemente enlazadas con operaciones CRUD.",due:makeDate(-5),completed:true},
-  {id:11,subjectClave:"308",title:"Tarea 4: Probabilidad condicional",desc:"Teorema de Bayes y aplicaciones.",due:makeDate(-7),completed:true}
+  {id:1,subjectClave:"306",title:"Serie de ejercicios 4: Integrales triples",desc:"Resolver ejercicios del capítulo 15, secciones 15.6-15.8 del Stewart.",due:makeDate(2),completed:false,responsible:"Equipo 306",deliveredAt:"",deliveredBy:""},
+  {id:2,subjectClave:"307",title:"Implementación de Árbol AVL",desc:"Programar inserción, eliminación y balanceo en un árbol AVL en C++.",due:makeDate(1),completed:false,responsible:"Equipo 307",deliveredAt:"",deliveredBy:""},
+  {id:3,subjectClave:"308",title:"Tarea 5: Distribuciones continuas",desc:"Resolver problemas de distribución normal, exponencial y gamma.",due:makeDate(1),completed:false,responsible:"Equipo 308",deliveredAt:"",deliveredBy:""},
+  {id:4,subjectClave:"305",title:"Demostración: Espacios vectoriales",desc:"Demostrar 5 propiedades de subespacios vectoriales con ejemplos numéricos.",due:makeDate(4),completed:false,responsible:"Equipo 305",deliveredAt:"",deliveredBy:""},
+  {id:5,subjectClave:"306",title:"Proyecto parcial: Teorema de Stokes",desc:"Aplicar el teorema de Stokes a un campo vectorial dado. Incluir gráficas.",due:makeDate(6),completed:false,responsible:"Equipo 306",deliveredAt:"",deliveredBy:""},
+  {id:6,subjectClave:"307",title:"Práctica 3: Grafos y algoritmo de Dijkstra",desc:"Implementar búsqueda del camino más corto en un grafo dirigido.",due:makeDate(3),completed:false,responsible:"Equipo 307",deliveredAt:"",deliveredBy:""},
+  {id:7,subjectClave:"308",title:"Examen parcial 2",desc:"Estudio para el segundo parcial: probabilidad condicional, Bayes, variables aleatorias.",due:makeDate(8),completed:false,responsible:"Equipo 308",deliveredAt:"",deliveredBy:""},
+  {id:8,subjectClave:"305",title:"Ejercicios: Transformaciones lineales",desc:"Ejercicios 4.1-4.3 del Grossman. Representación matricial de transformaciones.",due:makeDate(5),completed:false,responsible:"Equipo 305",deliveredAt:"",deliveredBy:""},
+  {id:9,subjectClave:"306",title:"Serie de ejercicios 3: Integrales dobles",desc:"Coordenadas polares y aplicaciones de integración doble.",due:makeDate(-3),completed:true,responsible:"Equipo 306",deliveredAt:new Date().toISOString(),deliveredBy:"Sistema"},
+  {id:10,subjectClave:"307",title:"Práctica 2: Listas enlazadas",desc:"Listas simplemente y doblemente enlazadas con operaciones CRUD.",due:makeDate(-5),completed:true,responsible:"Equipo 307",deliveredAt:new Date().toISOString(),deliveredBy:"Sistema"},
+  {id:11,subjectClave:"308",title:"Tarea 4: Probabilidad condicional",desc:"Teorema de Bayes y aplicaciones.",due:makeDate(-7),completed:true,responsible:"Equipo 308",deliveredAt:new Date().toISOString(),deliveredBy:"Sistema"}
   ];
 }
 var TASKS_STORAGE_KEY = "marcyhub_tasks_v1";
@@ -692,10 +743,12 @@ var resources = loadResources();
 var nextTaskId = getNextId(tasks), isAdmin = false, editingTaskId = null;
 var nextResId = getNextId(resources);
 var currentView = "dashboard", prevView = "dashboard", isSwitching = false, searchPrevView = null;
-var taskFileData = null, resFileData = null;
+var taskDraftAttachments = [], taskDraftLinks = [], taskUploadsInProgress = 0, resFileData = null;
 var admins = loadAdmins();
 var syncStateTimer = null;
 var hasHydratedFromServer = false;
+var currentAdminEmail = "";
+var currentAdminName = "";
 
 var dayIdx = {Lun:1,Mar:2,Mie:3,Jue:4,Vie:5};
 var hours = [8,9,10,11,12,13,14,15,16,17];
@@ -731,7 +784,7 @@ function renderSchedule() {
       var txtColor = subj.darkText ? "color:var(--fg);" : "color:var(--surface);";
       block.style.cssText = "top:" + top + "px;height:" + height + "px;background:" + subj.color + ";" + txtColor;
       block.innerHTML = '<span class="block-name">' + esc(subj.nombre) + '</span><span class="block-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(slot.aula) + '</span><span class="block-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.761 0 5-2.239 5-5S14.761 2 12 2 7 4.239 7 7s2.239 5 5 5z"/><path d="M3 22c0-4.418 4.03-8 9-8s9 3.582 9 8"/></svg>Maestro: ' + esc(subj.profesores) + '</span>';
-      block.onclick = function() { switchView("subjects"); setTimeout(function(){ showSubjectDetail(subj.clave); }, 200); };
+      block.onclick = function() { openSlotTasksModal(subj.clave, slot.dia, slot.inicio, slot.fin); };
       col.appendChild(block);
     });
   });
@@ -761,9 +814,9 @@ function renderAgenda() {
     } else {
       slots.forEach(function(s) {
         var txtColor = s.subj.darkText ? "color:var(--fg);" : "";
-        html += '<div class="agenda-slot"><div class="agenda-time">' + String(s.slot.inicio).padStart(2,"0") + ":00 – " + String(s.slot.fin).padStart(2,"0") + ':00</div>'
+        html += '<button class="agenda-slot" onclick="openSlotTasksModal(\'' + s.subj.clave + '\',\'' + s.slot.dia + '\',' + s.slot.inicio + ',' + s.slot.fin + ')"><div class="agenda-time">' + String(s.slot.inicio).padStart(2,"0") + ":00 – " + String(s.slot.fin).padStart(2,"0") + ':00</div>'
           + '<div class="agenda-info"><div class="agenda-name" style="' + txtColor + 'background:' + s.subj.color + ';display:inline-block;padding:2px 10px;border-radius:6px;font-size:13px;color:var(--surface);">' + esc(s.subj.nombre) + '</div>'
-          + '<div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(s.slot.aula) + '</div><div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.761 0 5-2.239 5-5S14.761 2 12 2 7 4.239 7 7s2.239 5 5 5z"/><path d="M3 22c0-4.418 4.03-8 9-8s9 3.582 9 8"/></svg>Maestro: ' + esc(s.subj.profesores) + '</div></div></div>';
+          + '<div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Salón ' + esc(s.slot.aula) + '</div><div class="agenda-room"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 12c2.761 0 5-2.239 5-5S14.761 2 12 2 7 4.239 7 7s2.239 5 5 5z"/><path d="M3 22c0-4.418 4.03-8 9-8s9 3.582 9 8"/></svg>Maestro: ' + esc(s.subj.profesores) + '</div><div class="agenda-hint">Clic para ver tareas de este horario</div></div></button>';
       });
     }
     html += '</div>';
@@ -776,12 +829,102 @@ function switchAgendaDay(day) {
   document.querySelectorAll(".agenda-day").forEach(function(d) { d.classList.toggle("active", d.id === "agenda-day-" + day); });
 }
 
+function getTaskDayKey(date) {
+  return window.MarcyModules.calendar.getTaskDayKey(date);
+}
+
+function getTasksForSlot(subjectClave, slotDay) {
+  return getTasksForSlotRecords(tasks, subjectClave, slotDay);
+}
+
+function renderSlotTasksList(list) {
+  if (!list.length) {
+    return '<div class="empty-state" style="padding:18px 12px;"><p>Sin tareas en esta sección</p></div>';
+  }
+  return list.map(function(t) {
+    var holiday = getHolidayInfo(t.due);
+    return '<div class="slot-task-item">'
+      + '<div class="title">' + esc(t.title) + '</div>'
+      + '<div class="meta">Responsable: ' + esc(t.responsible || "Sin responsable") + '</div>'
+      + '<div class="meta">Entrega: ' + esc(fmtDateTime(t.due)) + '</div>'
+      + (holiday ? '<div class="meta">' + esc(holiday.label) + '</div>' : "")
+      + '</div>';
+  }).join("");
+}
+
+function openSlotTasksModal(subjectClave, slotDay, slotStart, slotEnd) {
+  var modal = document.getElementById("slotTasksModal");
+  var body = document.getElementById("slotTasksModalBody");
+  var title = document.getElementById("slotTasksModalTitle");
+  if (!modal || !body || !title) return;
+  var subj = getSubject(subjectClave);
+  var relevant = getTasksForSlot(subjectClave, slotDay);
+  var pending = relevant.filter(function(t) { return !t.completed; });
+  var completed = relevant.filter(function(t) { return t.completed; });
+  title.textContent = "Tareas de " + (subj ? subj.nombre : subjectClave);
+  body.innerHTML = '<div class="slot-modal-head">Horario: ' + esc(slotDay + " " + String(slotStart).padStart(2, "0") + ":00 - " + String(slotEnd).padStart(2, "0") + ":00") + '</div>'
+    + '<div class="slot-modal-columns">'
+    + '<div class="slot-col"><h4>Pendientes (' + pending.length + ')</h4><div class="slot-task-list">' + renderSlotTasksList(pending) + '</div></div>'
+    + '<div class="slot-col"><h4>Entregadas (' + completed.length + ')</h4><div class="slot-task-list">' + renderSlotTasksList(completed) + '</div></div>'
+    + '</div>';
+  modal.style.display = "flex";
+}
+
+function closeSlotTasksModal() {
+  var modal = document.getElementById("slotTasksModal");
+  if (modal) modal.style.display = "none";
+}
+
+function getTaskById(taskId) {
+  return tasks.find(function(task) { return task.id === taskId; }) || null;
+}
+
+function getTaskAttachmentAt(task, index) {
+  if (!task || !Array.isArray(task.attachments)) return null;
+  return task.attachments[index] || null;
+}
+
+function renderTaskAttachmentsHTML(task) {
+  if (!task || !Array.isArray(task.attachments) || !task.attachments.length) return "";
+  return '<div class="task-files">' + task.attachments.map(function(att, index) {
+    return '<div class="task-file-item">'
+      + '<span class="title">' + esc(att.name || ("Adjunto " + (index + 1))) + '</span>'
+      + '<div class="meta">Subido por ' + esc(att.uploadedBy || "Sistema") + ' · ' + esc(fmtDateTime(att.uploadedAt || new Date())) + '</div>'
+      + '<div class="actions">'
+      + '<button class="btn btn-secondary btn-sm" onclick="openTaskAttachment(' + task.id + ',' + index + ')">Ver PDF</button>'
+      + '<button class="btn btn-ghost btn-sm" onclick="downloadTaskAttachment(' + task.id + ',' + index + ')">Descargar</button>'
+      + '</div></div>';
+  }).join("") + '</div>';
+}
+
+function renderTaskLinksHTML(task) {
+  if (!task || !Array.isArray(task.links) || !task.links.length) return "";
+  return '<div class="task-links">' + task.links.map(function(link) {
+    return '<div class="task-link-item">'
+      + '<a class="title" href="' + esc(link.url) + '" target="_blank" rel="noopener">' + esc(link.label || "Abrir enlace") + '</a>'
+      + '<div class="meta">' + esc(link.url) + '</div>'
+      + '<div class="meta">Agregado por ' + esc(link.addedBy || "Sistema") + ' · ' + esc(fmtDateTime(link.addedAt || new Date())) + '</div>'
+      + '</div>';
+  }).join("") + '</div>';
+}
+
+function renderTaskAuditHTML(task) {
+  var createdBy = task && task.createdBy ? task.createdBy : "Sistema";
+  var createdAt = task && task.createdAt ? fmtDateTime(task.createdAt) : fmtDateTime(new Date());
+  return '<div class="task-audit">Creada por ' + esc(createdBy) + ' · ' + esc(createdAt) + '</div>';
+}
+
 function renderTaskCardHTML(t, showSubject) {
-  var subj = getSubject(t.subjectClave);
-  var days = daysUntil(t.due);
+  var subj = getSubject(t.subjectClave) || { clave: t.subjectClave || "---", nombre: "Materia" };
+  var dueDate = asDate(t.due);
+  var days = daysUntil(dueDate);
   var urg = getTaskUrgency(t);
   var ul = getUrgencyLabel(days);
   var dueClass = urg === "overdue" ? "overdue" : urg === "urgent" ? "urgent" : urg === "warning" ? "warning" : "normal";
+  var holiday = getHolidayInfo(dueDate);
+  var canToggle = isAdmin;
+  var deliveredMeta = t.completed && t.deliveredAt ? " · " + fmtDateTime(t.deliveredAt) : "";
+  var deliveredBy = t.completed && t.deliveredBy ? " · " + t.deliveredBy : "";
   var pillHtml = "";
   if (!t.completed) {
     if (days < 0) {
@@ -790,15 +933,23 @@ function renderTaskCardHTML(t, showSubject) {
       pillHtml = '<span class="pill pill-accent pulse">Urgente</span>';
     }
   }
+  var attachmentsHtml = renderTaskAttachmentsHTML(t);
+  var linksHtml = renderTaskLinksHTML(t);
+  var auditHtml = renderTaskAuditHTML(t);
   return '<div class="task-card stagger-enter' + (t.completed ? " completed" : "") + '" id="task-' + t.id + '" data-task-id="' + t.id + '">'
     + '<div class="task-color-bar" style="background:' + subj.color + '"></div>'
     + '<div class="task-top"><div style="flex:1;min-width:0;">'
     + (showSubject !== false ? '<div class="task-subject">' + subj.clave + " · " + esc(subj.nombre) + '</div>' : "")
     + '<div class="task-title">' + esc(t.title) + '</div>'
     + '<div class="task-desc">' + esc(t.desc) + '</div>'
-    + '</div><button class="task-check" onclick="event.stopPropagation();toggleTask(' + t.id + ')" aria-label="' + (t.completed ? "Marcar pendiente" : "Marcar completada") + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></button></div>'
+    + '<div class="task-tags"><span class="task-tag ' + (t.completed ? "status-completed" : "status-pending") + '">' + (t.completed ? "Entregada" : "Pendiente") + '</span><span class="task-tag">Responsable: ' + esc(t.responsible || "Sin responsable") + '</span>' + (holiday ? '<span class="task-tag holiday-tag">Feriado</span>' : '') + '</div>'
+    + attachmentsHtml
+    + linksHtml
+    + auditHtml
+    + '</div><button class="task-check' + (canToggle ? '' : ' locked') + '" onclick="event.stopPropagation();toggleTask(' + t.id + ')" aria-label="' + (canToggle ? (t.completed ? "Marcar pendiente" : "Marcar entregada") : "Solo admin puede marcar") + '" title="' + (canToggle ? "Cambiar estado" : "Solo administrador puede marcar manualmente") + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></button></div>'
     + '<div class="task-meta"><span class="task-due ' + dueClass + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
-    + (t.completed ? "Entregada" : ul + " · " + fmtDate(t.due)) + '</span>'
+    + (t.completed ? "Entregada" + esc(deliveredMeta + deliveredBy) : ul + " · " + fmtDateTime(dueDate)) + '</span>'
+    + (holiday ? '<span class="task-holiday">' + esc(holiday.label) + '</span>' : "")
     + pillHtml
     + '</div></div>';
 }
@@ -828,9 +979,20 @@ function filterTasks(filter, el) {
 }
 
 function toggleTask(id) {
+  if (!isAdmin) {
+    showToast("Solo el administrador puede marcar tareas manualmente", "warning");
+    return;
+  }
   var t = tasks.find(function(t){ return t.id === id; });
   if (!t) return;
   t.completed = !t.completed;
+  if (t.completed) {
+    t.deliveredAt = new Date().toISOString();
+    t.deliveredBy = getCurrentAuditActorName();
+  } else {
+    t.deliveredAt = "";
+    t.deliveredBy = "";
+  }
   saveTasks();
   var card = document.getElementById("task-" + id);
   if (card) {
@@ -847,7 +1009,7 @@ function toggleTask(id) {
     }
   }
   updateStats();
-  showToast(t.completed ? "Tarea marcada como completada" : "Tarea reabierta", "success");
+  showToast(t.completed ? "Tarea marcada como entregada" : "Tarea reabierta", "success");
 }
 
 function refreshAllViews() {
@@ -879,6 +1041,17 @@ function updateStats() {
   if (pb) pb.textContent = p;
   var pf = document.querySelector(".progress-fill");
   if (pf) pf.style.width = pct + "%";
+  var wl = document.getElementById("weekLabel");
+  if (wl) {
+    var weekInfo = getSemesterWeekInfo(new Date());
+    if (weekInfo.week === 0) {
+      wl.innerHTML = 'Semana 0 de ' + weekInfo.totalWeeks + '<span class="week-sub">El ciclo aún no inicia</span>';
+    } else if (!weekInfo.inRange && weekInfo.weeksRemaining === 0) {
+      wl.innerHTML = 'Semana ' + weekInfo.totalWeeks + ' de ' + weekInfo.totalWeeks + '<span class="week-sub">Ciclo finalizado</span>';
+    } else {
+      wl.innerHTML = 'Semana ' + weekInfo.week + ' de ' + weekInfo.totalWeeks + '<span class="week-sub">Restan ' + weekInfo.weeksRemaining + ' semanas</span>';
+    }
+  }
 }
 
 function renderAllTasks(subjectFilter) {
@@ -1030,15 +1203,22 @@ function renderAdminTasks() {
     cnt.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><p>No hay tareas creadas</p><p class="empty-sub">Usa el formulario para crear la primera tarea</p></div>';
     return;
   }
-  cnt.innerHTML = '<table class="ds-table"><thead><tr><th>Tarea</th><th>Materia</th><th>Entrega</th><th>Estado</th><th>Acción</th></tr></thead><tbody>'
+  cnt.innerHTML = '<table class="ds-table"><thead><tr><th>Tarea</th><th>Materia</th><th>Responsable</th><th>Entrega</th><th>Estado</th><th>Acción</th></tr></thead><tbody>'
     + tasks.map(function(t) {
       var subj = getSubject(t.subjectClave);
       return '<tr><td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="' + esc(t.title) + '">' + esc(t.title) + '</td>'
-        + '<td>' + subj.clave + '</td><td>' + fmtDate(t.due) + '</td>'
+        + '<td>' + subj.clave + '</td><td>' + esc(t.responsible || "-") + '</td><td>' + fmtDateTime(t.due) + '</td>'
         + '<td>' + (t.completed ? '<span style="color:var(--success-ink);font-weight:500;">Entregada</span>' : '<span style="color:var(--accent-deep);font-weight:500;">Pendiente</span>') + '</td>'
         + '<td style="white-space:nowrap;"><button class="btn btn-ghost btn-sm" onclick="startEditTask(' + t.id + ')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:14px;height:14px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>'
         + ' <button class="btn btn-danger btn-sm" onclick="deleteTask(' + t.id + ')">Eliminar</button></td></tr>';
     }).join("") + '</tbody></table>';
+}
+
+function toDateTimeLocalValue(value) {
+  var date = new Date(value);
+  if (isNaN(date.getTime())) date = new Date();
+  var localTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  return localTime.toISOString().slice(0, 16);
 }
 
 function renderAdminResources() {
@@ -1065,9 +1245,23 @@ function startEditTask(id) {
   document.getElementById("adminTaskSubject").value = t.subjectClave;
   document.getElementById("adminTaskTitle").value = t.title;
   document.getElementById("adminTaskDesc").value = t.desc;
-  var d = new Date(t.due);
-  var dd = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
-  document.getElementById("adminTaskDue").value = dd;
+  document.getElementById("adminTaskResponsible").value = t.responsible || "";
+  document.getElementById("adminTaskDue").value = toDateTimeLocalValue(t.due);
+  taskDraftAttachments = Array.isArray(t.attachments)
+    ? t.attachments.map(function(att) { return normalizeTaskAttachment(att, t.createdBy || "Sistema", t.createdAt || new Date()); }).filter(Boolean)
+    : [];
+  if (!taskDraftAttachments.length && t.fileData) {
+    var legacy = normalizeTaskAttachment(t.fileData, t.createdBy || "Sistema", t.createdAt || new Date());
+    if (legacy) taskDraftAttachments = [legacy];
+  }
+  taskDraftLinks = normalizeTaskLinks(t.links || [], t.createdBy || "Sistema", t.createdAt || new Date());
+  taskUploadsInProgress = 0;
+  var fileInput = document.getElementById("adminTaskFileInput");
+  if (fileInput) fileInput.value = "";
+  var fileNameEl = document.getElementById("taskFileName");
+  if (fileNameEl) fileNameEl.textContent = taskDraftAttachments.length ? (taskDraftAttachments.length + " PDF(s) cargado(s)") : "";
+  renderTaskDraftAttachments();
+  renderTaskDraftLinks();
   document.getElementById("adminTaskFormTitle").textContent = "Editar tarea";
   document.getElementById("saveTaskBtn").textContent = "Guardar cambios";
   document.getElementById("cancelEditBtn").style.display = "";
@@ -1080,49 +1274,199 @@ function cancelEditTask() {
   document.getElementById("editingTaskId").value = "";
   document.getElementById("adminTaskTitle").value = "";
   document.getElementById("adminTaskDesc").value = "";
+  document.getElementById("adminTaskResponsible").value = "";
   document.getElementById("adminTaskDue").value = "";
+  document.getElementById("taskLinkLabel").value = "";
+  document.getElementById("taskLinkUrl").value = "";
   document.getElementById("taskFileName").textContent = "";
-  taskFileData = null;
+  taskDraftAttachments = [];
+  taskDraftLinks = [];
+  taskUploadsInProgress = 0;
+  renderTaskDraftAttachments();
+  renderTaskDraftLinks();
   document.getElementById("adminTaskFormTitle").textContent = "Crear tarea";
   document.getElementById("saveTaskBtn").textContent = "Crear tarea";
   document.getElementById("cancelEditBtn").style.display = "none";
-  clearFieldErrors(["taskTitleError","taskDueError"]);
+  clearFieldErrors(["taskTitleError","taskDueError","taskResponsibleError","taskLinkError"]);
+}
+
+function getCurrentAuditMeta() {
+  return {
+    isAdmin: !!isAdmin,
+    adminEmail: currentAdminEmail,
+    adminName: currentAdminName,
+    fallback: "Sistema"
+  };
+}
+
+function getCurrentAuditActorName() {
+  return resolveAuditActor(getCurrentAuditMeta());
+}
+
+function renderTaskDraftAttachments() {
+  var container = document.getElementById("taskAttachmentsList");
+  if (!container) return;
+  if (!taskDraftAttachments.length) {
+    container.innerHTML = "";
+    return;
+  }
+  container.innerHTML = taskDraftAttachments.map(function(att) {
+    return '<div class="item-chip"><div><div class="name">' + esc(att.name) + '</div><div class="meta">' + esc((att.uploadedBy || "Sistema") + " · " + fmtDateTime(att.uploadedAt)) + '</div></div><div class="actions"><button type="button" class="btn btn-ghost btn-sm" onclick="removeTaskDraftAttachment(\'' + esc(att.id) + '\')">Quitar</button></div></div>';
+  }).join("");
+}
+
+function renderTaskDraftLinks() {
+  var container = document.getElementById("taskLinksList");
+  if (!container) return;
+  if (!taskDraftLinks.length) {
+    container.innerHTML = "";
+    return;
+  }
+  container.innerHTML = taskDraftLinks.map(function(link) {
+    return '<div class="item-chip"><div><div class="name">' + esc(link.label) + '</div><div class="meta">' + esc(link.url) + ' · ' + esc((link.addedBy || "Sistema") + " · " + fmtDateTime(link.addedAt)) + '</div></div><div class="actions"><button type="button" class="btn btn-ghost btn-sm" onclick="removeTaskDraftLink(\'' + esc(link.id) + '\')">Quitar</button></div></div>';
+  }).join("");
+}
+
+function removeTaskDraftAttachment(id) {
+  taskDraftAttachments = taskDraftAttachments.filter(function(att) { return att.id !== id; });
+  var fileNameEl = document.getElementById("taskFileName");
+  if (fileNameEl) fileNameEl.textContent = taskDraftAttachments.length ? (taskDraftAttachments.length + " PDF(s) cargado(s)") : "";
+  renderTaskDraftAttachments();
+}
+
+function removeTaskDraftLink(id) {
+  taskDraftLinks = taskDraftLinks.filter(function(link) { return link.id !== id; });
+  renderTaskDraftLinks();
+}
+
+function addTaskDraftLink() {
+  var label = document.getElementById("taskLinkLabel").value.trim();
+  var url = document.getElementById("taskLinkUrl").value.trim();
+  clearFieldErrors(["taskLinkError"]);
+  if (!label || !/^https?:\/\//i.test(url)) {
+    showFieldError("taskLinkError");
+    return;
+  }
+  var normalized = normalizeTaskLinks([
+    {
+      label: label,
+      url: url,
+      addedBy: getCurrentAuditActorName(),
+      addedAt: new Date().toISOString()
+    }
+  ], getCurrentAuditActorName(), new Date().toISOString());
+  if (!normalized.length) {
+    showFieldError("taskLinkError");
+    return;
+  }
+  taskDraftLinks.push(normalized[0]);
+  document.getElementById("taskLinkLabel").value = "";
+  document.getElementById("taskLinkUrl").value = "";
+  renderTaskDraftLinks();
+}
+
+function handleTaskPdfSelect(input) {
+  if (!input.files || !input.files.length) return;
+  var selectedFiles = Array.prototype.slice.call(input.files);
+  var maxSize = 10 * 1024 * 1024;
+  var acceptedFiles = [];
+  selectedFiles.forEach(function(file) {
+    if (!isPdfFile(file)) {
+      showToast("Solo se permiten archivos PDF", "warning");
+      return;
+    }
+    if (file.size > maxSize) {
+      showToast("El archivo " + file.name + " excede 10 MB", "error");
+      return;
+    }
+    acceptedFiles.push(file);
+  });
+  if (!acceptedFiles.length) {
+    input.value = "";
+    return;
+  }
+  var actor = getCurrentAuditActorName();
+  var nowIso = new Date().toISOString();
+  taskUploadsInProgress += acceptedFiles.length;
+  Promise.all(acceptedFiles.map(function(file) {
+    return fileToDataUrl(file).then(function(dataUrl) {
+      return buildTaskAttachmentFromFile(file, dataUrl, actor, nowIso);
+    });
+  })).then(function(attachments) {
+    attachments.forEach(function(att) {
+      var normalized = normalizeTaskAttachment(att, actor, nowIso);
+      if (normalized) taskDraftAttachments.push(normalized);
+    });
+    var fileNameEl = document.getElementById("taskFileName");
+    if (fileNameEl) fileNameEl.textContent = taskDraftAttachments.length + " PDF(s) cargado(s)";
+    renderTaskDraftAttachments();
+    showToast(attachments.length === 1 ? "PDF adjunto agregado" : "PDFs adjuntos agregados", "success");
+  }).catch(function() {
+    showToast("No se pudo leer uno de los archivos PDF", "error");
+  }).then(function() {
+    taskUploadsInProgress = Math.max(0, taskUploadsInProgress - acceptedFiles.length);
+    input.value = "";
+  });
 }
 
 function saveTask() {
+  if (taskUploadsInProgress > 0) {
+    showToast("Espera a que terminen de cargarse los PDFs", "warning");
+    return;
+  }
   var subj = document.getElementById("adminTaskSubject").value;
   var title = document.getElementById("adminTaskTitle").value.trim();
   var desc = document.getElementById("adminTaskDesc").value.trim();
+  var responsible = document.getElementById("adminTaskResponsible").value.trim();
   var due = document.getElementById("adminTaskDue").value;
-  clearFieldErrors(["taskTitleError","taskDueError"]);
+  var dueDate = new Date(due);
+  clearFieldErrors(["taskTitleError","taskDueError","taskResponsibleError","taskLinkError"]);
   var valid = true;
   if (!title) { showFieldError("taskTitleError"); valid = false; }
-  if (!due) { showFieldError("taskDueError"); valid = false; }
+  if (!responsible) { showFieldError("taskResponsibleError"); valid = false; }
+  if (!due || isNaN(dueDate.getTime())) { showFieldError("taskDueError"); valid = false; }
   if (!valid) return;
+  var nowIso = new Date().toISOString();
+  var auditMeta = getCurrentAuditMeta();
+  var actor = resolveAuditActor(auditMeta);
   if (editingTaskId) {
     var t = tasks.find(function(t){ return t.id === editingTaskId; });
     if (t) {
       t.subjectClave = subj;
       t.title = title;
       t.desc = desc || "Sin descripción.";
-      t.due = new Date(due + "T23:59:59");
+      t.responsible = responsible;
+      t.due = dueDate.toISOString();
+      t.attachments = taskDraftAttachments.slice();
+      t.links = taskDraftLinks.slice();
+      t.createdBy = t.createdBy || actor;
+      t.createdAt = t.createdAt || nowIso;
+      var updatedTask = normalizeTaskRecord(t, { audit: auditMeta, now: nowIso });
+      var idx = tasks.findIndex(function(item) { return item.id === editingTaskId; });
+      if (idx >= 0) tasks[idx] = updatedTask;
       showToast("Tarea actualizada", "success");
     }
-    cancelEditTask();
   } else {
-    var newTask = {id:nextTaskId++,subjectClave:subj,title:title,desc:desc||"Sin descripción.",due:new Date(due+"T23:59:59"),completed:false};
-    if (taskFileData) newTask.fileData = taskFileData;
+    var newTask = normalizeTaskRecord({
+      id: nextTaskId++,
+      subjectClave: subj,
+      title: title,
+      desc: desc || "Sin descripción.",
+      due: dueDate.toISOString(),
+      completed: false,
+      responsible: responsible,
+      deliveredAt: "",
+      deliveredBy: "",
+      createdBy: actor,
+      createdAt: nowIso,
+      attachments: taskDraftAttachments.slice(),
+      links: taskDraftLinks.slice()
+    }, { audit: auditMeta, now: nowIso });
     tasks.push(newTask);
     showToast("Tarea creada correctamente", "success");
   }
+  cancelEditTask();
   saveTasks();
-  document.getElementById("adminTaskTitle").value = "";
-  document.getElementById("adminTaskDesc").value = "";
-  document.getElementById("adminTaskDue").value = "";
-  document.getElementById("taskFileName").textContent = "";
-  taskFileData = null;
-  var fileInput = document.getElementById("adminTaskFileInput");
-  if (fileInput) fileInput.value = "";
   updateStats();
   refreshAllViews();
   animateSaveBtn("saveTaskBtn");
@@ -1201,12 +1545,12 @@ function animateSaveBtn(btnId) {
 }
 
 function normalizeEmail(email) {
-  return String(email || "").trim().toLowerCase();
+  return window.MarcyModules.users.normalizeEmail(email);
 }
 function defaultAdmins() {
   return [
-    {email:"draenora@unam.edu",password:"admin1234",createdAt:"Inicial"},
-    {email:"profesor@enes.unam.mx",password:"admin1234",createdAt:"Inicial"}
+    {email:"draenora@unam.edu",name:"Dra Enora",password:"admin1234",createdAt:"Inicial"},
+    {email:"profesor@enes.unam.mx",name:"Profesor ENES",password:"admin1234",createdAt:"Inicial"}
   ];
 }
 function saveAdmins() {
@@ -1228,7 +1572,7 @@ function saveTasks() {
   scheduleStateSync();
 }
 function loadTasks() {
-  var fallback = defaultTasks();
+  var fallback = normalizeTaskRecords(defaultTasks(), { audit: { fallback: "Sistema" }, now: new Date().toISOString() });
   try {
     var raw = localStorage.getItem(TASKS_STORAGE_KEY);
     if (!raw) {
@@ -1237,21 +1581,7 @@ function loadTasks() {
     }
     var parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return fallback;
-    var clean = parsed.filter(function(t) {
-      return t && typeof t.title === "string" && typeof t.subjectClave === "string";
-    }).map(function(t) {
-      return {
-        id: Number(t.id) || 0,
-        subjectClave: t.subjectClave,
-        title: t.title,
-        desc: typeof t.desc === "string" ? t.desc : "Sin descripción.",
-        due: t.due ? new Date(t.due) : new Date(),
-        completed: !!t.completed,
-        fileData: t.fileData || null
-      };
-    }).filter(function(t) {
-      return t.id > 0 && !isNaN(t.due.getTime());
-    });
+    var clean = normalizeTaskRecords(parsed, { audit: { fallback: "Sistema" }, now: new Date().toISOString() });
     if (!clean.length) return fallback;
     return clean;
   } catch (e) {
@@ -1265,19 +1595,7 @@ function saveResources() {
   scheduleStateSync();
 }
 function serializeTasksForApi() {
-  return tasks.map(function(t) {
-    var dueDate = t.due instanceof Date ? t.due : new Date(t.due);
-    if (isNaN(dueDate.getTime())) dueDate = new Date();
-    return {
-      id: Number(t.id) || 0,
-      subjectClave: t.subjectClave,
-      title: t.title,
-      desc: t.desc,
-      due: dueDate.toISOString(),
-      completed: !!t.completed,
-      fileData: t.fileData || null
-    };
-  }).filter(function(t) { return t.id > 0; });
+  return serializeTaskRecords(tasks, { audit: getCurrentAuditMeta(), now: new Date().toISOString() });
 }
 function serializeResourcesForApi() {
   return resources.map(function(r) {
@@ -1318,19 +1636,7 @@ function scheduleStateSync() {
 function replaceStateFromServer(payload) {
   if (!payload || typeof payload !== "object") return;
   if (Array.isArray(payload.tasks)) {
-    tasks = payload.tasks.map(function(t) {
-      return {
-        id: Number(t.id) || 0,
-        subjectClave: t.subjectClave,
-        title: t.title,
-        desc: typeof t.desc === "string" ? t.desc : "Sin descripción.",
-        due: t.due ? new Date(t.due) : new Date(),
-        completed: !!t.completed,
-        fileData: t.fileData || null
-      };
-    }).filter(function(t) {
-      return t.id > 0 && typeof t.subjectClave === "string" && typeof t.title === "string" && !isNaN(t.due.getTime());
-    });
+    tasks = normalizeTaskRecords(payload.tasks, { audit: { fallback: "Sistema" }, now: new Date().toISOString() });
   }
   if (Array.isArray(payload.resources)) {
     resources = payload.resources.map(function(r) {
@@ -1354,12 +1660,17 @@ function replaceStateFromServer(payload) {
     admins = payload.admins.map(function(a) {
       return {
         email: normalizeEmail(a.email),
+        name: a.name || inferAdminName(a.email),
         password: String(a.password || ""),
         createdAt: a.createdAt || ""
       };
     }).filter(function(a) {
       return !!a.email && !!a.password;
     });
+  }
+  if (currentAdminEmail) {
+    var activeAdmin = getAdminByEmail(currentAdminEmail);
+    currentAdminName = activeAdmin ? (activeAdmin.name || inferAdminName(activeAdmin.email)) : currentAdminName;
   }
   nextTaskId = getNextId(tasks);
   nextResId = getNextId(resources);
@@ -1433,7 +1744,12 @@ function loadAdmins() {
     var clean = parsed.filter(function(a) {
       return a && typeof a.email === "string" && typeof a.password === "string";
     }).map(function(a) {
-      return {email:normalizeEmail(a.email),password:a.password,createdAt:a.createdAt || ""};
+      return {
+        email: normalizeEmail(a.email),
+        name: a.name || inferAdminName(a.email),
+        password: a.password,
+        createdAt: a.createdAt || ""
+      };
     });
     fallback.forEach(function(baseAdmin) {
       var exists = clean.some(function(a) { return a.email === baseAdmin.email; });
@@ -1456,9 +1772,9 @@ function renderAdminsList() {
     list.innerHTML = '<div class="empty-state" style="padding:12px;"><p>Sin admins registrados</p></div>';
     return;
   }
-  list.innerHTML = '<div class="table-wrap"><table class="table"><thead><tr><th>Correo</th><th>Alta</th></tr></thead><tbody>'
+  list.innerHTML = '<div class="table-wrap"><table class="table"><thead><tr><th>Nombre</th><th>Correo</th><th>Alta</th></tr></thead><tbody>'
     + admins.map(function(a) {
-      return '<tr><td>' + esc(a.email) + '</td><td>' + esc(a.createdAt || "-") + '</td></tr>';
+      return '<tr><td>' + esc(a.name || inferAdminName(a.email)) + '</td><td>' + esc(a.email) + '</td><td>' + esc(a.createdAt || "-") + '</td></tr>';
     }).join("") + '</tbody></table></div>';
 }
 function addAdmin() {
@@ -1476,6 +1792,7 @@ function addAdmin() {
   }
   admins.push({
     email: email,
+    name: inferAdminName(email),
     password: password,
     createdAt: new Date().toLocaleDateString("es-MX", {year:"numeric",month:"2-digit",day:"2-digit"})
   });
@@ -1556,20 +1873,24 @@ function adminLogin() {
   }).then(function(data) {
     if (!data || !data.ok) throw new Error("invalid_login");
     isAdmin = true;
+    currentAdminEmail = email;
+    currentAdminName = (data.admin && data.admin.name) ? data.admin.name : inferAdminName(email);
     document.getElementById("authOverlay").style.display = "none";
     document.getElementById("authEmail").value = "";
     document.getElementById("authPassword").value = "";
     switchView("admin");
-    showToast("Sesión de administrador iniciada", "success");
+    showToast("Sesión de administrador iniciada como " + currentAdminName, "success");
   }).catch(function() {
     var localAdmin = getAdminByEmail(email);
     if (localAdmin && localAdmin.password === pass) {
       isAdmin = true;
+      currentAdminEmail = localAdmin.email;
+      currentAdminName = localAdmin.name || inferAdminName(localAdmin.email);
       document.getElementById("authOverlay").style.display = "none";
       document.getElementById("authEmail").value = "";
       document.getElementById("authPassword").value = "";
       switchView("admin");
-      showToast("Sesión de administrador iniciada (modo local)", "success");
+      showToast("Sesión de administrador iniciada como " + currentAdminName + " (modo local)", "success");
       return;
     }
     showFieldError("authPassError");
@@ -1633,27 +1954,58 @@ function handleFileSelect(input, displayId) {
     var validExts = ["pdf","doc","docx","jpg","jpeg","png","mp4"];
     var ext = file.name.split(".").pop().toLowerCase();
     if (validExts.indexOf(ext) < 0) { showToast("Formato no soportado: " + ext, "error"); input.value = ""; return; }
-    display.textContent = file.name;
-    var url = URL.createObjectURL(file);
-    if (displayId === "taskFileName") taskFileData = {url:url, name:file.name};
-    else resFileData = {url:url, name:file.name};
+    if (display) display.textContent = "Cargando archivo...";
+    fileToDataUrl(file).then(function(dataUrl) {
+      if (display) display.textContent = file.name;
+      var payload = {
+        name: file.name,
+        url: dataUrl,
+        contentDataUrl: dataUrl,
+        mimeType: file.type || "",
+        size: file.size || 0
+      };
+      if (displayId === "resFileName") {
+        resFileData = payload;
+      }
+    }).catch(function() {
+      if (display) display.textContent = "";
+      showToast("No se pudo leer el archivo", "error");
+    }).then(function() {
+      input.value = "";
+    });
   }
+}
+
+function openPdfInModal(title, dataUrl, placeholderText) {
+  var modal = document.getElementById("pdfModal");
+  var titleEl = document.getElementById("pdfModalTitle");
+  var body = document.getElementById("pdfModalBody");
+  if (!modal || !titleEl || !body) return;
+  titleEl.textContent = title || "Visor de documento";
+  if (dataUrl) {
+    body.innerHTML = '<iframe src="' + esc(dataUrl) + '" title="' + esc(title || "Documento") + '"></iframe>';
+  } else {
+    body.innerHTML = '<div class="pdf-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>' + esc(title || "Documento") + '</p><p class="empty-sub">' + esc(placeholderText || "Vista previa no disponible") + '</p></div>';
+  }
+  modal.style.display = "flex";
 }
 
 function openPdfModal(resId) {
   var r = resources.find(function(r){ return r.id === resId; });
   if (!r) return;
-  var modal = document.getElementById("pdfModal");
-  var titleEl = document.getElementById("pdfModalTitle");
-  var body = document.getElementById("pdfModalBody");
-  if (!modal) return;
-  titleEl.textContent = r.title;
-  if (r.fileData && r.fileData.url) {
-    body.innerHTML = '<iframe src="' + esc(r.fileData.url) + '" title="' + esc(r.title) + '"></iframe>';
-  } else {
-    body.innerHTML = '<div class="pdf-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>' + esc(r.title) + '</p><p class="empty-sub">' + (r.link ? 'Archivo: ' + esc(r.link) : 'Vista previa no disponible para recursos semilla. Sube un archivo desde el panel de admin para habilitar la vista previa.') + '</p></div>';
+  var dataUrl = r.fileData && (r.fileData.contentDataUrl || r.fileData.url);
+  openPdfInModal(r.title, dataUrl || "", r.link ? "Archivo: " + r.link : "Vista previa no disponible para este recurso");
+}
+
+function openTaskAttachment(taskId, attachmentIndex) {
+  var task = getTaskById(taskId);
+  if (!task) return;
+  var attachment = getTaskAttachmentAt(task, attachmentIndex);
+  if (!attachment) {
+    showToast("No se encontró el adjunto", "error");
+    return;
   }
-  modal.style.display = "flex";
+  openPdfInModal(attachment.name || task.title, attachment.contentDataUrl || attachment.url || "", "No se pudo abrir la vista previa del PDF");
 }
 
 function closePdfModal() {
@@ -1671,9 +2023,10 @@ function closePdfModal() {
 function downloadResource(resId) {
   var r = resources.find(function(r){ return r.id === resId; });
   if (!r) return;
-  if (r.fileData && r.fileData.url) {
+  var resourceDataUrl = r.fileData && (r.fileData.contentDataUrl || r.fileData.url);
+  if (resourceDataUrl) {
     var a = document.createElement("a");
-    a.href = r.fileData.url;
+    a.href = resourceDataUrl;
     a.download = r.title;
     a.click();
   } else if (r.link && /^https?:\/\//.test(r.link)) {
@@ -1683,6 +2036,25 @@ function downloadResource(resId) {
   } else {
     showToast("No hay archivo para descargar", "error");
   }
+}
+
+function downloadTaskAttachment(taskId, attachmentIndex) {
+  var task = getTaskById(taskId);
+  if (!task) return;
+  var attachment = getTaskAttachmentAt(task, attachmentIndex);
+  if (!attachment) {
+    showToast("No se encontró el adjunto", "error");
+    return;
+  }
+  var fileUrl = attachment.contentDataUrl || attachment.url;
+  if (!fileUrl) {
+    showToast("No hay archivo para descargar", "error");
+    return;
+  }
+  var a = document.createElement("a");
+  a.href = fileUrl;
+  a.download = attachment.name || (task.title + ".pdf");
+  a.click();
 }
 
 function showToast(msg, type) {
@@ -1729,7 +2101,11 @@ function setupDragDrop(zoneId, displayId, dataTarget) {
       var input = zone.querySelector('input[type="file"]');
       if (input) {
         input.files = e.dataTransfer.files;
-        handleFileSelect(input, displayId);
+        if (dataTarget === "task") {
+          handleTaskPdfSelect(input);
+        } else {
+          handleFileSelect(input, displayId);
+        }
       }
     }
   });
@@ -1737,6 +2113,11 @@ function setupDragDrop(zoneId, displayId, dataTarget) {
 
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") {
+    var slotTasksModal = document.getElementById("slotTasksModal");
+    if (slotTasksModal && slotTasksModal.style.display !== "none") {
+      closeSlotTasksModal();
+      return;
+    }
     var pdfModal = document.getElementById("pdfModal");
     if (pdfModal && pdfModal.style.display !== "none") {
       closePdfModal();
@@ -1817,12 +2198,17 @@ Object.assign(window, {
   switchView: switchView,
   toggleTask: toggleTask,
   filterTasks: filterTasks,
+  openSlotTasksModal: openSlotTasksModal,
+  closeSlotTasksModal: closeSlotTasksModal,
   switchAgendaDay: switchAgendaDay,
   showSubjectDetail: showSubjectDetail,
   hideSubjectDetail: hideSubjectDetail,
   filterResources: filterResources,
   renderAllTasks: renderAllTasks,
   saveTask: saveTask,
+  addTaskDraftLink: addTaskDraftLink,
+  removeTaskDraftAttachment: removeTaskDraftAttachment,
+  removeTaskDraftLink: removeTaskDraftLink,
   deleteTask: deleteTask,
   startEditTask: startEditTask,
   cancelEditTask: cancelEditTask,
@@ -1835,9 +2221,12 @@ Object.assign(window, {
   closeSidebar: closeSidebar,
   handleSearch: handleSearch,
   handleFileSelect: handleFileSelect,
+  handleTaskPdfSelect: handleTaskPdfSelect,
   openPdfModal: openPdfModal,
+  openTaskAttachment: openTaskAttachment,
   closePdfModal: closePdfModal,
   downloadResource: downloadResource,
+  downloadTaskAttachment: downloadTaskAttachment,
   dismissToast: dismissToast
 });
 
